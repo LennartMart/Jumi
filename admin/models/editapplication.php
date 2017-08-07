@@ -61,7 +61,7 @@ class JumiModeleditApplication extends JModelLegacy
     {
         // Load the data
         if (empty($this->_data)) {
-            $query = 'SELECT * FROM #__jumi WHERE id = ' . $this->_id;
+            $query = 'SELECT * FROM #__jumi WHERE id = ' . $this->_db->quote($this->_id);
             $this->_db->setQuery($query);
             $this->_data = $this->_db->loadObject();
         }
@@ -87,10 +87,10 @@ class JumiModeleditApplication extends JModelLegacy
 
         $applid = $jinput->getInt('cid', 0);
 
-        $title = $this->_db->Quote($jinput->getString('title'));
-        $alias = $this->_db->Quote($jinput->getString('alias'));
-        $custom_script = $this->_db->Quote(stripslashes($_POST['custom_script']));
-        $path = $this->_db->Quote($jinput->getString('path'));
+        $title = $this->_db->quote($jinput->getString('title'));
+        $alias = $this->_db->quote($jinput->getString('alias'));
+        $custom_script = $this->_db->quote(stripslashes($_POST['custom_script']));
+        $path = $this->_db->quote($jinput->getString('path'));
         if ($applid == 0) {
             $query = "insert into #__jumi (title, alias, custom_script, path) values($title,$alias,$custom_script,$path)";
             $this->_db->setQuery($query);
@@ -120,7 +120,7 @@ class JumiModeleditApplication extends JModelLegacy
 
         if (count($cids)) {
             foreach ($cids AS $id) {
-                $query = "delete from #__jumi where id = $id";
+                $query = "delete from #__jumi where id = " . $this->_db->quote($id);
                 $this->_db->setQuery($query);
                 $this->_db->query();
                 if ($this->_db->getErrorMsg())

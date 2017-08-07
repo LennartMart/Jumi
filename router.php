@@ -13,7 +13,7 @@ function JumiBuildRoute(&$query)
     $segments = array();
 
     if (isset($query['fileid'])) {
-        $db->setQuery('select alias from #__jumi where id = ' . $query['fileid']);
+        $db->setQuery('select alias from #__jumi where id = ' . $db->quote($query['fileid']));
         $segments[] = $db->loadResult();
         unset($query['fileid']);
     }
@@ -26,7 +26,7 @@ function JumiParseRoute($segments)
     $db = JFactory::getDBO();
     $vars = array();
 
-    $db->setQuery('select id from #__jumi where alias = "' . $segments[0] . '"');
+    $db->setQuery('select id from #__jumi where alias = ' . $db->quote($segments[0]));
     $vars['fileid'] = $db->loadResult();
 
     return $vars;

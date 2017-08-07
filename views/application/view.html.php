@@ -27,7 +27,7 @@ class JumiViewApplication extends JViewLegacy
         $jinput = $mainframe->input;
         $fileid = $jinput->getInt('fileid');
 
-        $database->setQuery("select * from #__jumi where id = '{$fileid}' and published = 1");
+        $database->setQuery("select * from #__jumi where id = ". $database->quote($fileid) . "and published = 1");
         $appl = $database->loadObject();
 
         if (!is_object($appl))

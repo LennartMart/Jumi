@@ -26,7 +26,7 @@ class JumiModelshowApplications extends JModelLegacy
 
     function __construct()
     {
-
+        //$this->_db => database connector (JModelLegacy prop)
         parent::__construct();
 
         $this->loadFilter();
@@ -88,7 +88,7 @@ class JumiModelshowApplications extends JModelLegacy
                 $where[] = 'm.published = 0';
         }
         if ($this->_filter->search)
-            $where[] = 'LOWER(m.title) LIKE ' . $this->_db->Quote('%' . $this->_db->escape($this->_filter->search, true) . '%', false);
+            $where[] = 'LOWER(m.title) LIKE ' . $this->_db->quote('%' . $this->_db->escape($this->_filter->search, true) . '%', false);
 
         $where = (count($where) ? ' WHERE ' . implode(' AND ', $where) : '');
 
