@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Joomla! 3.x component Jumi
  *
@@ -12,14 +13,14 @@
  */
 
 defined('_JEXEC') or die('Restricted access');
-JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 JHtml::_('bootstrap.tooltip');
 JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
-$listOrder  = $this->escape($this->filter->filter_order);
-$listDirn   = $this->escape($this->filter->filter_order_Dir);
+$listOrder = $this->escape($this->filter->filter_order);
+$listDirn = $this->escape($this->filter->filter_order_Dir);
 $sortFields = $this->getSortFields();
 ?>
 <script type="text/javascript">
@@ -42,34 +43,34 @@ $sortFields = $this->getSortFields();
                 <div id="filter-bar" class="btn-toolbar">
                     <div class="filter-search btn-group pull-left">
                         <label for="search" class="element-invisible"></label>
-                        <input type="text" name="search" id="search" placeholder="<?php echo JText::_( 'Filter Applications by Title' ); ?>" value="<?php echo $this->filter->search;?>" title="<?php echo JText::_( 'Filter Applications by Title' ); ?>" />
+                        <input type="text" name="search" id="search" placeholder="<?php echo JText::_('Filter Applications by Title'); ?>" value="<?php echo $this->filter->search; ?>" title="<?php echo JText::_('Filter Applications by Title'); ?>" />
                     </div>
                     <div class="btn-group pull-left">
-                        <button class="btn hasTooltip" type="submit" title="<?php echo JText::_( 'Search' ); ?>"><i class="icon-search"></i></button>
-                        <button class="btn hasTooltip" type="button" title="<?php echo JText::_( 'Reset' ); ?>" onclick="document.id('search').value='';this.form.submit();"><i class="icon-remove"></i></button>
+                        <button class="btn hasTooltip" type="submit" title="<?php echo JText::_('Search'); ?>"><i class="icon-search"></i></button>
+                        <button class="btn hasTooltip" type="button" title="<?php echo JText::_('Reset'); ?>" onclick="document.id('search').value='';this.form.submit();"><i class="icon-remove"></i></button>
                     </div>
                      <div class="filter-search btn-group pull-left">
-                        <?php echo JHTML::_('grid.state',  $this->filter->filter_state );?>
+                        <?php echo JHTML::_('grid.state', $this->filter->filter_state); ?>
                     </div>
 
 
                     <div class="btn-group pull-right hidden-phone">
-                        <label for="limit" class="element-invisible"><?php echo JText::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC');?></label>
+                        <label for="limit" class="element-invisible"><?php echo JText::_('JFIELD_PLG_SEARCH_SEARCHLIMIT_DESC'); ?></label>
                         <?php echo $this->pagination->getLimitBox(); ?>
                     </div>
                     <div class="btn-group pull-right hidden-phone">
-                        <label for="directionTable" class="element-invisible"><?php echo JText::_('JFIELD_ORDERING_DESC');?></label>
+                        <label for="directionTable" class="element-invisible"><?php echo JText::_('JFIELD_ORDERING_DESC'); ?></label>
                         <select name="directionTable" id="directionTable" class="input-medium" onchange="Joomla.orderTable()">
-                            <option value=""><?php echo JText::_('JFIELD_ORDERING_DESC');?></option>
-                            <option value="asc" <?php if ($listDirn == 'asc') echo 'selected="selected"'; ?>><?php echo JText::_('JGLOBAL_ORDER_ASCENDING');?></option>
-                            <option value="desc" <?php if ($listDirn == 'desc') echo 'selected="selected"'; ?>><?php echo JText::_('JGLOBAL_ORDER_DESCENDING');?></option>
+                            <option value=""><?php echo JText::_('JFIELD_ORDERING_DESC'); ?></option>
+                            <option value="asc" <?php if ($listDirn == 'asc') echo 'selected="selected"'; ?>><?php echo JText::_('JGLOBAL_ORDER_ASCENDING'); ?></option>
+                            <option value="desc" <?php if ($listDirn == 'desc') echo 'selected="selected"'; ?>><?php echo JText::_('JGLOBAL_ORDER_DESCENDING'); ?></option>
                         </select>
                     </div>
                     <div class="btn-group pull-right">
-                        <label for="sortTable" class="element-invisible"><?php echo JText::_('JGLOBAL_SORT_BY');?></label>
+                        <label for="sortTable" class="element-invisible"><?php echo JText::_('JGLOBAL_SORT_BY'); ?></label>
                         <select name="sortTable" id="sortTable" class="input-medium" onchange="Joomla.orderTable()">
-                            <option value=""><?php echo JText::_('JGLOBAL_SORT_BY');?></option>
-                            <?php echo JHtml::_('select.options', $sortFields, 'value', 'text', $listOrder);?>
+                            <option value=""><?php echo JText::_('JGLOBAL_SORT_BY'); ?></option>
+                            <?php echo JHtml::_('select.options', $sortFields, 'value', 'text', $listOrder); ?>
                         </select>
                     </div>
 
@@ -93,42 +94,42 @@ $sortFields = $this->getSortFields();
                         <input type="checkbox" name="checkall-toggle" value="" title="<?php echo JText::_('JGLOBAL_CHECK_ALL'); ?>" onclick="Joomla.checkAll(this)" />
                     </th>
                     <th class="title">
-                        <?php echo JHTML::_('grid.sort', 'Title', 'm.title', @$this->filter->filter_order_Dir, @$this->filter->filter_order ); ?>
+                        <?php echo JHTML::_('grid.sort', 'Title', 'm.title', @$this->filter->filter_order_Dir, @$this->filter->filter_order); ?>
                     </th>
                     <th width="30%" align="center">
-                        <?php echo JHTML::_('grid.sort', 'Path', 'm.path',  @$this->filter->filter_order_Dir, @$this->filter->filter_order ); ?>
+                        <?php echo JHTML::_('grid.sort', 'Path', 'm.path', @$this->filter->filter_order_Dir, @$this->filter->filter_order); ?>
                     </th>
                     <th width="8%" align="center">
-                        <?php echo JHTML::_('grid.sort', 'Published', 'm.published',  @$this->filter->filter_order_Dir, @$this->filter->filter_order ); ?>
+                        <?php echo JHTML::_('grid.sort', 'Published', 'm.published', @$this->filter->filter_order_Dir, @$this->filter->filter_order); ?>
                     </th>
                     <!--th width="12%" align="center">
-                        <?php echo JHTML::_('grid.sort', 'Access', 'g.name',  @$this->filter->filter_order_Dir, @$this->filter->filter_order ); ?>
+                        <?php echo JHTML::_('grid.sort', 'Access', 'g.name', @$this->filter->filter_order_Dir, @$this->filter->filter_order); ?>
                     </th-->
                     <th width="1%" nowrap="nowrap">
-                        <?php echo JHTML::_('grid.sort', 'ID', 'm.id',  @$this->filter->filter_order_Dir, @$this->filter->filter_order ); ?>
+                        <?php echo JHTML::_('grid.sort', 'ID', 'm.id', @$this->filter->filter_order_Dir, @$this->filter->filter_order); ?>
                     </th>
                 </tr>
             </thead>
             <?php
             $k = 0;
-            for ($i=0, $n=count( $this->items ); $i < $n; $i++) {
+            for ($i = 0, $n = count($this->items); $i < $n; $i++) {
 
 
                 $row = $this->items[$i];
-                $checked    = JHTML::_( 'grid.id', $i, $row->id );
-                $link = JRoute::_( 'index.php?option=com_jumi&controller=application&task=edit&cid[]='. $row->id );
-                $published  = JHtml::_('jgrid.published', $row->published, $i);
+                $checked = JHTML::_('grid.id', $i, $row->id);
+                $link = JRoute::_('index.php?option=com_jumi&controller=application&task=edit&cid[]=' . $row->id);
+                $published = JHtml::_('jgrid.published', $row->published, $i);
 
                 ?>
                 <tr class="row<?php echo $i % 2; ?>">
                     <td>
-                        <?php echo $this->pagination->getRowOffset( $i ); ?>
+                        <?php echo $this->pagination->getRowOffset($i); ?>
                     </td>
                     <td>
                         <?php echo $checked; ?>
                     </td>
                     <td>
-                        <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Application' ); ?>">
+                        <a href="<?php echo $link; ?>" title="<?php echo JText::_('Edit Application'); ?>">
                             <?php echo $row->title; ?></a>
                     </td>
                     <td align="center">

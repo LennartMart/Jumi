@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Jumi! 3.0 component
  *
@@ -14,7 +15,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-jimport( 'joomla.application.component.controller' );
+jimport('joomla.application.component.controller');
 
 /**
  * 
@@ -22,7 +23,8 @@ jimport( 'joomla.application.component.controller' );
  * @package Joomla
  * @subpackage Jumi
  */
-class JumiControllerapplication extends JumiController {
+class JumiControllerapplication extends JumiController
+{
 
     /**
      * constructor (registers additional tasks to methods)
@@ -33,8 +35,8 @@ class JumiControllerapplication extends JumiController {
         parent::__construct();
 
         // Register Extra tasks
-        $this->registerTask( 'add'  ,   'edit' );
-        $this->registerTask( 'unpublish',   'publish');
+        $this->registerTask('add', 'edit');
+        $this->registerTask('unpublish', 'publish');
     }
 
     /**
@@ -44,7 +46,7 @@ class JumiControllerapplication extends JumiController {
     function edit()
     {
         $jinput = JFactory::getApplication()->input;
-        $jinput->set( 'view', 'editapplication' );
+        $jinput->set('view', 'editapplication');
         $jinput->set('hidemainmenu', 1);
 
         parent::display();
@@ -59,9 +61,10 @@ class JumiControllerapplication extends JumiController {
         $model = $this->getModel('editapplication');
 
         if ($model->store()) {
-            $msg = JText::_( 'Application Saved' );
-        } else {
-            $msg = JText::_( 'Error Saving Application' );
+            $msg = JText::_('Application Saved');
+        }
+        else {
+            $msg = JText::_('Error Saving Application');
         }
 
         // Check the table in so it can be edited.... we are done with it anyway
@@ -78,14 +81,15 @@ class JumiControllerapplication extends JumiController {
         $model = $this->getModel('editapplication');
 
         if ($model->store()) {
-            $msg = JText::_( 'Changes to Application saved' );
-        } else {
-            $msg = JText::_( 'Error Saving Application' );
+            $msg = JText::_('Changes to Application saved');
+        }
+        else {
+            $msg = JText::_('Error Saving Application');
         }
         $jinput = JFactory::getApplication()->input;
-        $array = $jinput->getArray('cid');
-        $id = $array.length > 0 ? (int)$array[0] : 0;
-        $this->setRedirect( 'index.php?option=com_jumi&controller=application&task=edit&cid[]=' . $id, $msg );
+        $cids = $jinput->post->get('cid', array(), 'ARRAY');
+        $id = count($cids) > 0 ? (int)$cids[0] : 0;
+        $this->setRedirect('index.php?option=com_jumi&controller=application&task=edit&cid[]=' . $id, $msg);
 
     }
 
@@ -95,15 +99,16 @@ class JumiControllerapplication extends JumiController {
      */
     function publish()
     {
-        $publish = ( $this->getTask() == 'publish' ? 1 : 0 );
+        $publish = ($this->getTask() == 'publish' ? 1 : 0);
         $model = $this->getModel('editapplication');
-        if(!$model->publish($publish)) {
-            $msg = JText::_( 'Error: One or More Applications Could not be Published/Unpublished' );
-        } else {
+        if (!$model->publish($publish)) {
+            $msg = JText::_('Error: One or More Applications Could not be Published/Unpublished');
+        }
+        else {
             $msg = '';
         }
 
-        $this->setRedirect( 'index.php?option=com_jumi', $msg );
+        $this->setRedirect('index.php?option=com_jumi', $msg);
     }
 
     /**
@@ -113,13 +118,14 @@ class JumiControllerapplication extends JumiController {
     function remove()
     {
         $model = $this->getModel('editapplication');
-        if(!$model->delete()) {
-            $msg = JText::_( 'Error: One or More Applications Could not be Deleted' );
-        } else {
-            $msg = JText::_( 'Application(s) Deleted' );
+        if (!$model->delete()) {
+            $msg = JText::_('Error: One or More Applications Could not be Deleted');
+        }
+        else {
+            $msg = JText::_('Application(s) Deleted');
         }
 
-        $this->setRedirect( 'index.php?option=com_jumi', $msg );
+        $this->setRedirect('index.php?option=com_jumi', $msg);
     }
 
     /**
@@ -128,8 +134,8 @@ class JumiControllerapplication extends JumiController {
      */
     function cancel()
     {
-        $msg = JText::_( 'Operation Cancelled' );
-        $this->setRedirect( 'index.php?option=com_jumi', $msg );
+        $msg = JText::_('Operation Cancelled');
+        $this->setRedirect('index.php?option=com_jumi', $msg);
     }
 
 }

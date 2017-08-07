@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Joomla! 3.x component Jumi
  *
@@ -14,7 +15,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 $row = $this->row;
-JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 JHtml::_('bootstrap.tooltip');
 ?>
         <script type="text/javascript">
@@ -26,10 +27,10 @@ JHtml::_('bootstrap.tooltip');
             else if (form.title.value == "") {
                 form.title.style.border = "1px solid red";
                 form.title.focus();
-                 alert( "<?php echo JText::_('COM_JUMI_NEEDTITLE', true ); ?>" );
+                 alert( "<?php echo JText::_('COM_JUMI_NEEDTITLE', true); ?>" );
             }
             else if(form.custom_script.value == "" && form.path.value == "") {
-                alert( "<?php echo JText::_('COM_JUMI_NEEDSCRIPT', true ); ?>" );
+                alert( "<?php echo JText::_('COM_JUMI_NEEDSCRIPT', true); ?>" );
             }
             else {
                 submitform( task );
@@ -45,7 +46,7 @@ JHtml::_('bootstrap.tooltip');
             <tr>
                 <td width="200" class="key">
                     <label for="title">
-                        <?php echo JText::_( 'COM_JUMI_TITLE' ); ?>:
+                        <?php echo JText::_('COM_JUMI_TITLE'); ?>:
                     </label>
                 </td>
                 <td>
@@ -55,7 +56,7 @@ JHtml::_('bootstrap.tooltip');
             <tr>
                 <td width="200" class="key">
                     <label for="alias">
-                        <?php echo JText::_( 'Alias' ); ?>:
+                        <?php echo JText::_('Alias'); ?>:
                     </label>
                 </td>
                 <td>
@@ -65,7 +66,7 @@ JHtml::_('bootstrap.tooltip');
             <tr>
                 <td class="key">
                     <label for="custom_script">
-                        <?php echo JHTML::_('tooltip', JTEXT::_('COM_JUMI_CUSTOMSCRIPT')); ?> <?php echo JText::_( 'COM_JUMI_CUSTOM_SCRIPT' ); ?>:
+                        <?php echo JHTML::_('tooltip', JTEXT::_('COM_JUMI_CUSTOMSCRIPT')); ?> <?php echo JText::_('COM_JUMI_CUSTOM_SCRIPT'); ?>:
                     </label>
                 </td>
                 <td>
@@ -76,7 +77,7 @@ JHtml::_('bootstrap.tooltip');
                 <td class="key">
 
                     <label for="path">
-                        <?php echo JHTML::_('tooltip', JTEXT::_('COM_JUMI_INCLFILE')); ?> <?php echo JText::_( 'COM_JUMI_PATHNAME' ); ?>:
+                        <?php echo JHTML::_('tooltip', JTEXT::_('COM_JUMI_INCLFILE')); ?> <?php echo JText::_('COM_JUMI_PATHNAME'); ?>:
                     </label>
                 </td>
                 <td>

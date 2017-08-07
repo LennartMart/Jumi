@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Joomla! 3.x component Jumi
  *
@@ -15,28 +16,31 @@
 defined('_JEXEC') or die('Restricted access');
 
 // Import Joomla! libraries
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
-class JumiVieweditApplication extends JViewLegacy {
-    function display($tpl = null) {
+class JumiVieweditApplication extends JViewLegacy
+{
+    function display($tpl = null)
+    {
         //get the data
-        $application        = $this->get('Data');
+        $application = $this->get('Data');
 
-        $isNew      = ($application->id < 1);
+        $isNew = ($application->id < 1);
 
-        $text = $isNew ? JText::_( 'New' ) : JText::_( 'Edit' );
-        JToolBarHelper::title(   JText::_( 'Jumi Application' ).': <small><small>[ ' . $text.' ]</small></small>','manage.png' );
+        $text = $isNew ? JText::_('New') : JText::_('Edit');
+        JToolBarHelper::title(JText::_('Jumi Application') . ': <small><small>[ ' . $text . ' ]</small></small>', 'manage.png');
         JToolBarHelper::save();
-        if ($isNew)  {
+        if ($isNew) {
             JToolBarHelper::cancel();
-        } else {
+        }
+        else {
             JToolBarHelper::apply();
             // for existing items the button is renamed `close`
-            JToolBarHelper::cancel( 'cancel', 'Close' );
+            JToolBarHelper::cancel('cancel', 'Close');
         }
         JToolBarHelper::help('screen.applications.edit');
 
-        $this->assignRef('row',     $application);
+        $this->assignRef('row', $application);
 
         parent::display($tpl);
     }

@@ -1,17 +1,19 @@
 <?php
-/**
-* @version   $Id$
-* @package   Jumi
-* @copyright (C) 2008 - 2015 Edvard Ananyan
-* @license   GNU/GPL v3 http://www.gnu.org/licenses/gpl.html
-*/
 
-function JumiBuildRoute(&$query) {
+/**
+ * @version   $Id$
+ * @package   Jumi
+ * @copyright (C) 2008 - 2015 Edvard Ananyan
+ * @license   GNU/GPL v3 http://www.gnu.org/licenses/gpl.html
+ */
+
+function JumiBuildRoute(&$query)
+{
     $db = JFactory::getDBO();
     $segments = array();
 
-    if(isset($query['fileid'])) {
-        $db->setQuery('select alias from #__jumi where id = '.$query['fileid']);
+    if (isset($query['fileid'])) {
+        $db->setQuery('select alias from #__jumi where id = ' . $query['fileid']);
         $segments[] = $db->loadResult();
         unset($query['fileid']);
     }
@@ -19,11 +21,12 @@ function JumiBuildRoute(&$query) {
     return $segments;
 }
 
-function JumiParseRoute($segments) {
+function JumiParseRoute($segments)
+{
     $db = JFactory::getDBO();
     $vars = array();
 
-    $db->setQuery('select id from #__jumi where alias = "'.$segments[0].'"');
+    $db->setQuery('select id from #__jumi where alias = "' . $segments[0] . '"');
     $vars['fileid'] = $db->loadResult();
 
     return $vars;

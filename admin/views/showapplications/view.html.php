@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Joomla! 3.x component Jumi
  *
@@ -15,10 +16,12 @@
 defined('_JEXEC') or die('Restricted access');
 
 // Import Joomla! libraries
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
-class JumiViewshowApplications extends JViewLegacy {
-    function display($tpl = null) {
+class JumiViewshowApplications extends JViewLegacy
+{
+    function display($tpl = null)
+    {
 
         //toolbar
         JToolBarHelper::publishList();
@@ -26,21 +29,21 @@ class JumiViewshowApplications extends JViewLegacy {
         JToolBarHelper::addNew();
         JToolBarHelper::editList();
         JToolBarHelper::deleteList();
-        JToolBarHelper::help( 'screen.applications' );
+        JToolBarHelper::help('screen.applications');
 
         // Get data from the model
-        $items = $this->get( 'Data');
+        $items = $this->get('Data');
         $filter = $this->get('Filter');
         $pagination = $this->get('Pagination');
 
-        $this->assignRef( 'items', $items );
+        $this->assignRef('items', $items);
         $this->assignRef('filter', $filter);
         $this->assignRef('pagination', $pagination);
 
         JHtmlSidebar::addFilter(
-                JText::_('JOPTION_SELECT_PUBLISHED'),
-                'filter_published',
-                @JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->filter->published, true)
+            JText::_('JOPTION_SELECT_PUBLISHED'),
+            'filter_published',
+            @JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->filter->published, true)
         );
 
         parent::display($tpl);
@@ -56,10 +59,10 @@ class JumiViewshowApplications extends JViewLegacy {
     protected function getSortFields()
     {
         return array(
-                'm.published' => JText::_('JSTATUS'),
-                'm.title' => JText::_('JGLOBAL_TITLE'),
-                'm.path' => JText::_('Path'),
-                'm.id' => JText::_('Id'),
+            'm.published' => JText::_('JSTATUS'),
+            'm.title' => JText::_('JGLOBAL_TITLE'),
+            'm.path' => JText::_('Path'),
+            'm.id' => JText::_('Id'),
         );
     }
 }

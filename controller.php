@@ -1,16 +1,18 @@
 <?php
+
 /**
-* @version   $Id$
-* @package   Jumi
-* @copyright (C) 2008 - 2015 Edvard Ananyan
-* @license   GNU/GPL v3 http://www.gnu.org/licenses/gpl.html
-*/
+ * @version   $Id$
+ * @package   Jumi
+ * @copyright (C) 2008 - 2015 Edvard Ananyan
+ * @license   GNU/GPL v3 http://www.gnu.org/licenses/gpl.html
+ */
 
 defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
-class JumiController extends JControllerLegacy {
+class JumiController extends JControllerLegacy
+{
     /**
      * Method to display a view.
      *
@@ -20,7 +22,8 @@ class JumiController extends JControllerLegacy {
      * @return  JController     This object to support chaining.
      * @since   1.5
      */
-    public function display($cachable = false, $urlparams = false) {
+    public function display($cachable = false, $urlparams = false)
+    {
         // Set the default view name and format from the Request.
         $jinput = JFactory::getApplication()->input;
         $jinput->set('view', 'application');
