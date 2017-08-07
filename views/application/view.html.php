@@ -11,11 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
 
 /**
- * HTML Contact View class for the Contact component
- *
- * @package     Joomla.Site
- * @subpackage  com_contact
- * @since       1.5
+ * @package     Jumi
  */
 class JumiViewApplication extends JViewLegacy {
     function display($tpl = null) {
@@ -48,7 +44,6 @@ class JumiViewApplication extends JViewLegacy {
                 echo '<div style="color:#FF0000;background:#FFFF00;">The file '.$filepath.' does not exists.</div>';
         }
 
-        echo $noscript = '<noscript><strong>JavaScript is currently disabled.</strong>Please enable it for a better experience of <a href="http://2glux.com/projects/jumi">Jumi</a>.</noscript>';
-        parent::display($tpl);
+       parent::display($tpl);
     }
 }

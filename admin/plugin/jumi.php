@@ -98,8 +98,6 @@ class plgSystemJumi extends JPlugin {
                 $continuesearching = false;
             }
         }
-        $noscript = '<noscript><strong>JavaScript is currently disabled.</strong>Please enable it for a better experience of <a href="http://2glux.com/projects/jumi">Jumi</a>.</noscript>';
-        $content = str_replace('</body>', $noscript . '</body>', $content);
         JResponse::setBody($content);
     }
 
