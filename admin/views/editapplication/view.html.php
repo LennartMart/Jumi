@@ -40,7 +40,7 @@ class JumiVieweditApplication extends JViewLegacy
         }
         JToolBarHelper::help('screen.applications.edit');
 
-        $this->assignRef('row', $application);
+        $this->row = $application;
 
         parent::display($tpl);
     }

@@ -36,9 +36,9 @@ class JumiViewshowApplications extends JViewLegacy
         $filter = $this->get('Filter');
         $pagination = $this->get('Pagination');
 
-        $this->assignRef('items', $items);
-        $this->assignRef('filter', $filter);
-        $this->assignRef('pagination', $pagination);
+        $this->items = $items;
+        $this->filter = $filter;
+        $this->pagination = $pagination;
 
         JHtmlSidebar::addFilter(
             JText::_('JOPTION_SELECT_PUBLISHED'),
