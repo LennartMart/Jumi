@@ -1,14 +1,13 @@
 <?php
 /**
- * Joomla! 1.5 component sexy_polling
+ * Jumi! 3.0 component
  *
  * @version $Id: answers.php 2012-04-05 14:30:25 svn $
  * @author Edvard Ananyan
- * @package Joomla
- * @subpackage sexy_polling
+ * @package Jumi
+ * @subpackage Jumi
  * @license GNU/GPL
  *
- * Sexy Polling
  *
  */
 
@@ -18,10 +17,10 @@ defined('_JEXEC') or die('Restricted access');
 jimport( 'joomla.application.component.controller' );
 
 /**
- * sexy_polling Controller
+ * 
  *
  * @package Joomla
- * @subpackage sexy_polling
+ * @subpackage Jumi
  */
 class JumiControllerapplication extends JumiController {
 
@@ -97,7 +96,7 @@ class JumiControllerapplication extends JumiController {
         $publish = ( $this->getTask() == 'publish' ? 1 : 0 );
         $model = $this->getModel('editapplication');
         if(!$model->publish($publish)) {
-            $msg = JText::_( 'Error: One or More Applications Could not be Published/Unbublished' );
+            $msg = JText::_( 'Error: One or More Applications Could not be Published/Unpublished' );
         } else {
             $msg = '';
         }

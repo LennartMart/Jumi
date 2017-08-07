@@ -1,145 +1,26 @@
 <?php
 /**
- * Joomla! 1.5 component sexy_polling
+ * Joomla! 3.x component Jumi
  *
  * @version $Id: default.php 2012-04-05 14:30:25 svn $
  * @author Edvard Ananyan
  * @package Joomla
- * @subpackage sexy_polling
+ * @subpackage Jumi
  * @license GNU/GPL
  *
  *
  */
 
 defined('_JEXEC') or die('Restricted access');
+JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+JHtml::_('bootstrap.tooltip');
+JHtml::_('behavior.multiselect');
+JHtml::_('dropdown.init');
+JHtml::_('formbehavior.chosen', 'select');
 
-if(JV == 'j2') {
-    //j2 stuff here///////////////////////////////////////////////////////////////////////////////////////////////////////
-?>
- <form action="index.php?option=com_jumi" method="post" name="adminForm" id="adminForm">
-
-        <table>
-        <tr>
-            <td align="left" width="100%">
-                <?php echo JText::_( 'Filter' ); ?>:
-                <input type="text" name="search" id="search" value="<?php echo $this->filter->search;?>" class="text_area" onchange="document.adminForm.submit();" />
-                <button onclick="this.form.submit();"><?php echo JText::_( 'Go' ); ?></button>
-                <button onclick="document.getElementById('search').value='';this.form.submit();"><?php echo JText::_( 'Reset' ); ?></button>
-            </td>
-            <td nowrap="nowrap">
-                <?php
-               echo JHTML::_('grid.state',  $this->filter->filter_state );
-                ?>
-            </td>
-        </tr>
-        </table>
-
-        <div id="tablecell">
-            <table class="adminlist">
-            <thead>
-                <tr>
-                    <th width="1%">
-                        <?php echo JText::_( 'NUM' ); ?>
-                    </th>
-                    <th width="2%">
-                        <input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $this->items ); ?>);" />
-                    </th>
-                    <th class="title">
-                        <?php echo JHTML::_('grid.sort', 'Title', 'm.title', @$this->filter->filter_order_Dir, @$this->filter->filter_order ); ?>
-                    </th>
-                    <th width="30%" align="center">
-                        <?php echo JHTML::_('grid.sort', 'Path', 'm.path',  @$this->filter->filter_order_Dir, @$this->filter->filter_order ); ?>
-                    </th>
-                    <th width="8%" align="center">
-                        <?php echo JHTML::_('grid.sort', 'Published', 'm.published',  @$this->filter->filter_order_Dir, @$this->filter->filter_order ); ?>
-                    </th>
-                    <!--th width="12%" align="center">
-                        <?php echo JHTML::_('grid.sort', 'Access', 'g.name',  @$this->filter->filter_order_Dir, @$this->filter->filter_order ); ?>
-                    </th-->
-                    <th width="1%" nowrap="nowrap">
-                        <?php echo JHTML::_('grid.sort', 'ID', 'm.id',  @$this->filter->filter_order_Dir, @$this->filter->filter_order ); ?>
-                    </th>
-                </tr>
-            </thead>
-            <?php
-            $k = 0;
-            for ($i=0, $n=count( $this->items ); $i < $n; $i++) {
-
-
-                $row = $this->items[$i];
-                $checked    = JHTML::_( 'grid.id', $i, $row->id );
-                $link = JRoute::_( 'index.php?option=com_jumi&controller=application&task=edit&cid[]='. $row->id );
-                $published  = JHTML::_('grid.published', $row, $i );
-
-                ?>
-                <tr class="<?php echo "row$k"; ?>">
-                    <td>
-                        <?php echo $this->pagination->getRowOffset( $i ); ?>
-                    </td>
-                    <td>
-                        <?php echo $checked; ?>
-                    </td>
-                    <td>
-                        <a href="<?php echo $link; ?>" title="<?php echo JText::_( 'Edit Application' ); ?>">
-                            <?php echo $row->title; ?></a>
-                    </td>
-                    <td align="center">
-                        <?php echo $row->path; ?>
-                    </td>
-                    <td align="center">
-                        <?php echo $published; ?>
-                    </td>
-                    <!--td align="center">
-                        <?php echo $accesslevel; ?>
-                    </td-->
-                    <td align="center">
-                        <?php echo $row->id; ?>
-                    </td>
-                </tr>
-                <?php
-                $k = 1 - $k;
-            }
-            ?>
-            <tfoot>
-                <td colspan="8">
-                    <?php echo $this->pagination->getListFooter(); ?>
-                </td>
-            </tfoot>
-            </table>
-        </div>
-
-        <input type="hidden" name="task" value="" />
-        <input type="hidden" name="option" value="com_jumi" />
-        <input type="hidden" name="controller" value="application" />
-        <input type="hidden" name="boxchecked" value="0" />
-        <input type="hidden" name="filter_order" value="<?php echo $this->filter->filter_order; ?>" />
-        <input type="hidden" name="filter_order_Dir" value="<?php echo $this->filter->filter_order_Dir; ?>" />
-        </form>
-<table class="adminlist" style="width: 100%;margin-top: 12px;"><tr>
-<td align="center" valign="middle" id="jumi_td" style="">
-    <a href="http://2glux.com/projects/jumi" style="font-size: 12px;" target="_blank">Jumi</a> developed by <a href="http://2glux.com" target="_blank">2GLux.com</a>
-    <div style="position: absolute;right: 2px;top: 7px;">
-        <a href="http://extensions.joomla.org/extensions/core-enhancements/coding-a-scripts-integration/custom-code-in-content/1023" target="_blank" id="jumi_rate" class="jumi_bottom_icon" title="If you like Jumi, Rate Us PLEASE">&nbsp;</a>
-        <a href="http://2glux.com/projects/jumi" target="_blank" id="jumi_homepage" style="margin: 0 2px 0 0px;" class="jumi_bottom_icon" title="Project Homepage">&nbsp;</a>
-        <a href="http://2glux.com" target="_blank" id="jumi_developer" class="jumi_bottom_icon" title="2GLux Company">&nbsp;</a>
-        <a href="http://2glux.com/forum/jumi/" target="_blank" id="jumi_support" class="jumi_bottom_icon" title="Support Forum">&nbsp;</a>
-    </div>
-</td>
-</tr></table>
-<?php
-}
-else {
-    //j3 stuff here///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-    JHtml::_('bootstrap.tooltip');
-    JHtml::_('behavior.multiselect');
-    JHtml::_('dropdown.init');
-    JHtml::_('formbehavior.chosen', 'select');
-
-    $listOrder  = $this->escape($this->filter->filter_order);
-    $listDirn   = $this->escape($this->filter->filter_order_Dir);
-    $sortFields = $this->getSortFields();
+$listOrder  = $this->escape($this->filter->filter_order);
+$listDirn   = $this->escape($this->filter->filter_order_Dir);
+$sortFields = $this->getSortFields();
 ?>
 <script type="text/javascript">
     Joomla.orderTable = function() {
@@ -282,18 +163,3 @@ else {
         <input type="hidden" name="filter_order" value="<?php echo $this->filter->filter_order; ?>" />
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->filter->filter_order_Dir; ?>" />
 </form>
-
-
-
-<table class="adminlist" style="width: 100%;margin-top: 12px;"><tr>
-<td align="center" valign="middle" id="jumi_td" style="">
-    <a href="http://2glux.com/projects/jumi" style="font-size: 12px;" target="_blank">Jumi</a> developed by <a href="http://2glux.com" target="_blank">2GLux.com</a>
-    <div style="position: absolute;right: 2px;top: 7px;">
-        <a href="http://extensions.joomla.org/extensions/core-enhancements/coding-a-scripts-integration/custom-code-in-content/1023" target="_blank" id="jumi_rate" class="jumi_bottom_icon" title="If you like Jumi, Rate Us PLEASE">&nbsp;</a>
-        <a href="http://2glux.com/projects/jumi" target="_blank" id="jumi_homepage" style="margin: 0 2px 0 0px;" class="jumi_bottom_icon" title="Project Homepage">&nbsp;</a>
-        <a href="http://2glux.com" target="_blank" id="jumi_developer" class="jumi_bottom_icon" title="2GLux Company">&nbsp;</a>
-        <a href="http://2glux.com/forum/jumi/" target="_blank" id="jumi_support" class="jumi_bottom_icon" title="Support Forum">&nbsp;</a>
-    </div>
-</td>
-</tr></table>
-<?php }?>

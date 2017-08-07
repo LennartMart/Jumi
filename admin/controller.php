@@ -1,14 +1,14 @@
 <?php
 /**
- * Joomla! 1.5 component sexy_polling
+ * Joomla! 3.x component Jumi
  *
  * @version $Id: controller.php 2012-04-05 14:30:25 svn $
  * @author Edvard Ananyan
  * @package Joomla
- * @subpackage sexypolling
+ * @subpackage Jumi
  * @license GNU/GPL
  *
- * Sexy Polling
+ * Jumi
  *
  */
 
@@ -24,40 +24,20 @@ jimport( 'joomla.application.component.controller' );
  * @subpackage com_jumi
  */
 
-if(JV == 'j2') {
-    //j2 stuff here///////////////////////////////////////////////////////////////////////////////////////////////////////
-    class JumiController extends JController {
-        function display($cachable = false, $urlparams = array())
-        {
+class JumiController extends JControllerLegacy{
+    function display($cachable = false, $urlparams = array())
+    {
 
-            addSub( 'Application Manager', 'showapplications');
+        addSub( 'Application Manager', 'showapplications');
 
-            //Set the default view, just in case
-            $view = JRequest::getCmd('view');
-            if(empty($view)) {
-                JRequest::setVar('view', 'showApplications');
-            };
+        //Set the default view, just in case
+        $view = JRequest::getCmd('view');
+        if(empty($view)) {
+            JRequest::setVar('view', 'showApplications');
+        };
 
-            parent::display();
-        }// function
-    };
-}
-else {
-    //j3 stuff here///////////////////////////////////////////////////////////////////////////////////////////////////////
-    class JumiController extends JControllerLegacy{
-        function display($cachable = false, $urlparams = array())
-        {
+        parent::display();
+    }// function
+};
 
-            addSub( 'Application Manager', 'showapplications');
-
-            //Set the default view, just in case
-            $view = JRequest::getCmd('view');
-            if(empty($view)) {
-                JRequest::setVar('view', 'showApplications');
-            };
-
-            parent::display();
-        }// function
-    };
-}
 ?>
