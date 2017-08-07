@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Joomla! 3.0 Jumi
  *
@@ -17,9 +18,10 @@ defined('_JEXEC') or die('Restricted access');
 
 // Import Joomla! libraries
 jimport('joomla.application.component.model');
-jimport( 'joomla.utilities.date' );
+jimport('joomla.utilities.date');
 
-class JumiModeleditApplication extends JModelLegacy {
+class JumiModeleditApplication extends JModelLegacy
+{
 
     /**
      * Constructor that retrieves the ID from the request
@@ -31,8 +33,9 @@ class JumiModeleditApplication extends JModelLegacy {
     {
         parent::__construct();
 
-        $array = JRequest::getVar('cid',  0, '', 'array');
-        $this->setId((int)$array[0]);
+        $jinput = JFactory::getApplication()->input;
+        $id = $jinput->getInt('cid', 0);
+        $this->setId($id);
     }
 
     /**
@@ -45,8 +48,8 @@ class JumiModeleditApplication extends JModelLegacy {
     function setId($id)
     {
         // Set id and wipe data
-        $this->_id      = $id;
-        $this->_data    = null;
+        $this->_id = $id;
+        $this->_data = null;
 
     }
 
@@ -57,9 +60,9 @@ class JumiModeleditApplication extends JModelLegacy {
     function &getData()
     {
         // Load the data
-        if (empty( $this->_data )) {
-            $query = 'SELECT * FROM #__jumi WHERE id = '.$this->_id;
-            $this->_db->setQuery( $query );
+        if (empty($this->_data)) {
+            $query = 'SELECT * FROM #__jumi WHERE id = ' . $this->_id;
+            $this->_db->setQuery($query);
             $this->_data = $this->_db->loadObject();
         }
         if (!$this->_data) {
@@ -67,7 +70,7 @@ class JumiModeleditApplication extends JModelLegacy {
             $this->_data->id = 0;
             $this->_data->name = null;
         }
-        JFilterOutput::objectHTMLSafe($this->_data,ENT_QUOTES);
+        JFilterOutput::objectHTMLSafe($this->_data, ENT_QUOTES);
         return $this->_data;
     }
 
@@ -80,22 +83,24 @@ class JumiModeleditApplication extends JModelLegacy {
      */
     function store()
     {
-        $array = JRequest::getVar('cid',  0, '', 'array');
-        $applid = (int)$array[0];
+        $jinput = JFactory::getApplication()->input;
 
-        $title         = $this->_db->Quote(JRequest::getString('title'));
-        $alias         = $this->_db->Quote(JRequest::getString('alias'));
+        $applid = $jinput->getInt('cid', 0);
+
+        $title = $this->_db->Quote($jinput->getString('title'));
+        $alias = $this->_db->Quote($jinput->getString('alias'));
         $custom_script = $this->_db->Quote(stripslashes($_POST['custom_script']));
-        $path          = $this->_db->Quote(JRequest::getString('path'));
-        if($applid == 0) {
+        $path = $this->_db->Quote($jinput->getString('path'));
+        if ($applid == 0) {
             $query = "insert into #__jumi (title, alias, custom_script, path) values($title,$alias,$custom_script,$path)";
             $this->_db->setQuery($query);
-            if(!$this->_db->query())
+            if (!$this->_db->query())
                 return false;
-        } else {
+        }
+        else {
             $query = "update #__jumi set title = $title, alias = $alias, custom_script = $custom_script, path = $path where id = $applid";
             $this->_db->setQuery($query);
-            if(!$this->_db->query())
+            if (!$this->_db->query())
                 return false;
         }
 
@@ -110,39 +115,42 @@ class JumiModeleditApplication extends JModelLegacy {
      */
     function delete()
     {
-        $cids = JRequest::getVar( 'cid', array(0), 'post', 'array' );
+        $jinput = JFactory::getApplication()->input;
+        $cids = $jinput->post->get('cid', array(), 'ARRAY');
 
-        if (count( $cids )) {
-            foreach($cids AS $id) {
+        if (count($cids)) {
+            foreach ($cids AS $id) {
                 $query = "delete from #__jumi where id = $id";
                 $this->_db->setQuery($query);
                 $this->_db->query();
-                if($this->_db->getErrorMsg())
+                if ($this->_db->getErrorMsg())
                     return false;
             }
-            }
+        }
 
-            return true;
+        return true;
     }
 
     /**
-    * Method to delete record(s)
-        *
-        * @access  public
-        * @return  boolean True on success
-        */
-    function publish($publish) {
-    $cids = JRequest::getVar( 'cid', array(0), 'post', 'array' );
-            JArrayHelper::toInteger($cids);
-            $cids_sql = implode(',',$cids);
+     * Method to delete record(s)
+     *
+     * @access  public
+     * @return  boolean True on success
+     */
+    function publish($publish)
+    {
+        $jinput = JFactory::getApplication()->input;
+        $cids = $jinput->post->get('cid', array(), 'ARRAY');
+        JArrayHelper::toInteger($cids);
+        $cids_sql = implode(',', $cids);
 
-            if (count( $cids )) {
-            $query = "UPDATE #__jumi SET published = ".(int) $publish." WHERE id in ($cids_sql)";
-            $this->_db->setQuery( $query );
+        if (count($cids)) {
+            $query = "UPDATE #__jumi SET published = " . (int)$publish . " WHERE id in ($cids_sql)";
+            $this->_db->setQuery($query);
             if (!$this->_db->query())
                 return false;
-            }
+        }
 
-            return true;
+        return true;
     }
 }

@@ -22,7 +22,8 @@ class JumiController extends JControllerLegacy {
      */
     public function display($cachable = false, $urlparams = false) {
         // Set the default view name and format from the Request.
-        JRequest::setVar('view', 'application');
+        $jinput = JFactory::getApplication()->input;
+        $jinput->set('view', 'application');
 
         parent::display();
 

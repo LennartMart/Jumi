@@ -16,13 +16,14 @@ jimport('joomla.application.component.view');
 class JumiViewApplication extends JViewLegacy {
     function display($tpl = null) {
         // Initialise variables.
-        $fileid    = JRequest::getInt('fileid');
-        $database  = JFactory::getDBO();
-        $user      = JFactory::getUser();
-        $document  = JFactory::getDocument();
+        
+        $database = JFactory::getDBO();
+        $user = JFactory::getUser();
+        $document = JFactory::getDocument();
         $mainframe = JFactory::getApplication();
+        $jinput = $mainframe->input;
+        $fileid = $jinput->getInt('fileid');
 
-        //$database->setQuery("select * from #__jumi where id = '{$fileid}' and access <= {$user->gid} and published = 1");
         $database->setQuery("select * from #__jumi where id = '{$fileid}' and published = 1");
         $appl = $database->loadObject();
 

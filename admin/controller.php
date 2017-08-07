@@ -31,9 +31,10 @@ class JumiController extends JControllerLegacy{
         addSub( 'Application Manager', 'showapplications');
 
         //Set the default view, just in case
-        $view = JRequest::getCmd('view');
+        $jinput = JFactory::getApplication()->input;
+        $view = $jinput->getCmd('view');
         if(empty($view)) {
-            JRequest::setVar('view', 'showApplications');
+            $jinput->set('view','showApplications');
         };
 
         parent::display();

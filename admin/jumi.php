@@ -21,8 +21,10 @@ define( 'COM_JUMI_BASEURL', JURI::root().str_replace( DS, '/', COM_JUMI_DIR ));
 
 require_once( JPATH_COMPONENT.DS.'controller.php' );
 
+$jinput = JFactory::getApplication()->input;
+
 // Require specific controller if requested
-if($controller = JRequest::getWord('controller')) {
+if($controller = $jinput->getWord('controller')) {
     $path = JPATH_COMPONENT.DS.'controllers'.DS.$controller.'.php';
     if (file_exists($path)) {
         require_once $path;
@@ -35,20 +37,18 @@ if($controller = JRequest::getWord('controller')) {
 $classname    = 'JumiController'.$controller;
 $controller   = new $classname( );
 
-
 $document = JFactory::getDocument();
 
 $cssFile = JURI::base(true).'/components/com_jumi/assets/css/icons.css';
 $document->addStyleSheet($cssFile, 'text/css', null, array());
 
 // Perform the Request task
-$controller->execute( JRequest::getCmd('task'));
+$controller->execute( $jinput->getCmd('task'));
 $controller->redirect();
 
 function addSub($title, $v, $controller = null, $image = null) {
-
     $enabled = false;
-    $view = JRequest::getWord("view", 'showapplications');
+    $view = $jinput->getWord("view", 'showapplications');
     if($view == $v) {
         $img = $v;
         if($image != null) $img = $image;
@@ -58,5 +58,4 @@ function addSub($title, $v, $controller = null, $image = null) {
     $link = 'index.php?option=com_jumi&view='.$v;
     if($controller != null) $link .= '&controller='.$controller;
     JSubMenuHelper::addEntry( JText::_($title), $link, $enabled);
-
 }

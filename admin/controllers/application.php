@@ -43,8 +43,9 @@ class JumiControllerapplication extends JumiController {
      */
     function edit()
     {
-        JRequest::setVar( 'view', 'editapplication' );
-        JRequest::setVar('hidemainmenu', 1);
+        $jinput = JFactory::getApplication()->input;
+        $jinput->set( 'view', 'editapplication' );
+        $jinput->set('hidemainmenu', 1);
 
         parent::display();
     }
@@ -81,8 +82,9 @@ class JumiControllerapplication extends JumiController {
         } else {
             $msg = JText::_( 'Error Saving Application' );
         }
-        $array = JRequest::getVar('cid',  0, '', 'array');
-        $id = (int)$array[0];
+        $jinput = JFactory::getApplication()->input;
+        $array = $jinput->getArray('cid');
+        $id = $array.length > 0 ? (int)$array[0] : 0;
         $this->setRedirect( 'index.php?option=com_jumi&controller=application&task=edit&cid[]=' . $id, $msg );
 
     }
