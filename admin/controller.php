@@ -13,10 +13,12 @@
  *
  */
 
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Factory;
+
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-jimport('joomla.application.component.controller');
 
 /**
  * jumi Controller
@@ -25,7 +27,7 @@ jimport('joomla.application.component.controller');
  * @subpackage com_jumi
  */
 
-class JumiController extends JControllerLegacy
+class JumiController extends BaseController
 {
     function display($cachable = false, $urlparams = array())
     {
@@ -33,16 +35,14 @@ class JumiController extends JControllerLegacy
         addSub('Application Manager', 'showapplications');
 
         //Set the default view, just in case
-        $jinput = JFactory::getApplication()->input;
+        $jinput = Factory::getApplication()->input;
         $view = $jinput->getCmd('view');
         if (empty($view)) {
             $jinput->set('view', 'showApplications');
         };
 
         parent::display();
-    }// function
+    } // function
 
 
 };
-
-?>

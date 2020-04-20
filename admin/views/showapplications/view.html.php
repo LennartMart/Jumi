@@ -11,25 +11,27 @@
  *
  *
  */
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\HTML\HTMLHelper;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-// Import Joomla! libraries
-jimport('joomla.application.component.view');
 
-class JumiViewshowApplications extends JViewLegacy
+class JumiViewshowApplications extends HtmlView
 {
     function display($tpl = null)
     {
 
         //toolbar
-        JToolBarHelper::publishList();
-        JToolBarHelper::unpublishList();
-        JToolBarHelper::addNew();
-        JToolBarHelper::editList();
-        JToolBarHelper::deleteList();
-        JToolBarHelper::help('screen.applications');
+        ToolbarHelper::publishList();
+        ToolbarHelper::unpublishList();
+        ToolbarHelper::addNew();
+        ToolbarHelper::editList();
+        ToolbarHelper::deleteList();
+        ToolbarHelper::help('screen.applications');
 
         // Get data from the model
         $items = $this->get('Data');
@@ -41,9 +43,9 @@ class JumiViewshowApplications extends JViewLegacy
         $this->pagination = $pagination;
 
         JHtmlSidebar::addFilter(
-            JText::_('JOPTION_SELECT_PUBLISHED'),
+            Text::_('JOPTION_SELECT_PUBLISHED'),
             'filter_published',
-            @JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->filter->published, true)
+            @HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->filter->published, true)
         );
 
         parent::display($tpl);
@@ -59,12 +61,10 @@ class JumiViewshowApplications extends JViewLegacy
     protected function getSortFields()
     {
         return array(
-            'm.published' => JText::_('JSTATUS'),
-            'm.title' => JText::_('JGLOBAL_TITLE'),
-            'm.path' => JText::_('Path'),
-            'm.id' => JText::_('Id'),
+            'm.published' => Text::_('JSTATUS'),
+            'm.title' => Text::_('JGLOBAL_TITLE'),
+            'm.path' => Text::_('Path'),
+            'm.id' => Text::_('Id'),
         );
     }
 }
-
-?>

@@ -13,6 +13,11 @@
  *
  */
 
+use Joomla\CMS\Factory;
+use Joomla\String\StringHelper;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Pagination\Pagination;
+use Joomla\CMS\Object\CMSObject;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
@@ -20,7 +25,7 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.model');
 jimport('joomla.database.database');
 
-class JumiModelshowApplications extends JModelLegacy
+class JumiModelshowApplications extends BaseDatabaseModel
 {
     var $_data, $_total, $_pagination, $_filter;
 
@@ -31,7 +36,7 @@ class JumiModelshowApplications extends JModelLegacy
 
         $this->loadFilter();
 
-        $mainframe = JFactory::getApplication();
+        $mainframe = Factory::getApplication();
 
         $option = 'com_jumi';
 
@@ -39,7 +44,7 @@ class JumiModelshowApplications extends JModelLegacy
         $this->_filter->filter_order_Dir = $mainframe->getUserStateFromRequest("$option.filter_order_Dir", 'filter_order_Dir', '');
         $this->_filter->filter_state = $mainframe->getUserStateFromRequest("$option.filter_state", 'filter_state', '*');
         $search = $mainframe->getUserStateFromRequest("$option.search", 'search', '');
-        $search = $this->_db->escape(trim(JString::strtolower($search)));
+        $search = $this->_db->escape(trim(StringHelper::strtolower($search)));
         $this->_filter->search = $search;
 
         if (!in_array($this->_filter->filter_order, array('m.title', 'm.path', 'm.published', 'g.name', 'm.id'))) {
@@ -61,8 +66,7 @@ class JumiModelshowApplications extends JModelLegacy
 
     function loadFilter()
     {
-        $this->_filter = new JObject();
-
+        $this->_filter = new CMSObject();
     }
 
     function getFilter()
@@ -80,8 +84,7 @@ class JumiModelshowApplications extends JModelLegacy
 
         $where = array();
 
-        if ($this->_filter->filter_state)
-            {
+        if ($this->_filter->filter_state) {
             if ($this->_filter->filter_state == 'P')
                 $where[] = 'm.published = 1';
             elseif ($this->_filter->filter_state == 'U')
@@ -120,24 +123,22 @@ class JumiModelshowApplications extends JModelLegacy
     function getTotal()
     {
         //-- Load the content if it doesn't already exist
-        if (empty($this->_total))
-            {
+        if (empty($this->_total)) {
             $this->_total = $this->_getListCount($this->_buildQuery());
         }
 
         return $this->_total;
-    }//function
+    } //function
 
     function getPagination()
     {
         //-- Load the content if it doesn't already exist
-        if (empty($this->_pagination))
-            {
+        if (empty($this->_pagination)) {
             jimport('joomla.html.pagination');
-            $this->_pagination = new JPagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
+            $this->_pagination = new Pagination($this->getTotal(), $this->getState('limitstart'), $this->getState('limit'));
         }
 
         return $this->_pagination;
-    }//function
+    } //function
 
 }

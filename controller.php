@@ -7,11 +7,12 @@
  * @license   GNU/GPL v3 http://www.gnu.org/licenses/gpl.html
  */
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+
 defined('_JEXEC') or die('Restricted access');
 
-jimport('joomla.application.component.controller');
-
-class JumiController extends JControllerLegacy
+class JumiController extends BaseController
 {
     /**
      * Method to display a view.
@@ -25,7 +26,7 @@ class JumiController extends JControllerLegacy
     public function display($cachable = false, $urlparams = false)
     {
         // Set the default view name and format from the Request.
-        $jinput = JFactory::getApplication()->input;
+        $jinput = Factory::getApplication()->input;
         $jinput->set('view', 'application');
 
         parent::display();

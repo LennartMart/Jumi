@@ -7,9 +7,11 @@
  * @license   GNU/GPL v3 http://www.gnu.org/licenses/gpl.html
  */
 
+use Joomla\CMS\Factory;
+
 function JumiBuildRoute(&$query)
 {
-    $db = JFactory::getDBO();
+    $db = Factory::getDBO();
     $segments = array();
 
     if (isset($query['fileid'])) {
@@ -23,7 +25,7 @@ function JumiBuildRoute(&$query)
 
 function JumiParseRoute($segments)
 {
-    $db = JFactory::getDBO();
+    $db = Factory::getDBO();
     $vars = array();
 
     $db->setQuery('select id from #__jumi where alias = ' . $db->quote($segments[0]));

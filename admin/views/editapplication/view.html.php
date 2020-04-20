@@ -11,14 +11,14 @@
  *
  *
  */
-
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-// Import Joomla! libraries
-jimport('joomla.application.component.view');
 
-class JumiVieweditApplication extends JViewLegacy
+class JumiVieweditApplication extends HtmlView
 {
     function display($tpl = null)
     {
@@ -27,23 +27,21 @@ class JumiVieweditApplication extends JViewLegacy
 
         $isNew = ($application->id < 1);
 
-        $text = $isNew ? JText::_('New') : JText::_('Edit');
-        JToolBarHelper::title(JText::_('Jumi Application') . ': <small><small>[ ' . $text . ' ]</small></small>', 'manage.png');
-        JToolBarHelper::save();
+        $text = $isNew ? Text::_('New') : Text::_('Edit');
+        ToolbarHelper::title(Text::_('Jumi Application') . ': <small><small>[ ' . $text . ' ]</small></small>', 'manage.png');
+        ToolbarHelper::save();
         if ($isNew) {
-            JToolBarHelper::cancel();
+            ToolbarHelper::cancel();
         }
         else {
-            JToolBarHelper::apply();
+            ToolbarHelper::apply();
             // for existing items the button is renamed `close`
-            JToolBarHelper::cancel('cancel', 'Close');
+            ToolbarHelper::cancel('cancel', 'Close');
         }
-        JToolBarHelper::help('screen.applications.edit');
+        ToolbarHelper::help('screen.applications.edit');
 
         $this->row = $application;
 
         parent::display($tpl);
     }
 }
-
-?>

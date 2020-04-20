@@ -12,41 +12,41 @@
  *
  */
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\HTML\HTMLHelper;
+
 defined('_JEXEC') or die('Restricted access');
 
 $row = $this->row;
-JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
-JHtml::_('bootstrap.tooltip');
+HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
+HTMLHelper::_('bootstrap.tooltip');
 ?>
-        <script type="text/javascript">
-        Joomla.submitbutton = function(task) {
-            var form = document.adminForm;
-            if (task == 'cancel') {
-                submitform( task );
-            }
-            else if (form.title.value == "") {
-                form.title.style.border = "1px solid red";
-                form.title.focus();
-                 alert( "<?php echo JText::_('COM_JUMI_NEEDTITLE', true); ?>" );
-            }
-            else if(form.custom_script.value == "" && form.path.value == "") {
-                alert( "<?php echo JText::_('COM_JUMI_NEEDSCRIPT', true); ?>" );
-            }
-            else {
-                submitform( task );
-            }
+<script type="text/javascript">
+    Joomla.submitbutton = function(task) {
+        var form = document.adminForm;
+        if (task == 'cancel') {
+            submitform(task);
+        } else if (form.title.value == "") {
+            form.title.style.border = "1px solid red";
+            form.title.focus();
+            alert("<?php echo Text::_('COM_JUMI_NEEDTITLE', true); ?>");
+        } else if (form.custom_script.value == "" && form.path.value == "") {
+            alert("<?php echo Text::_('COM_JUMI_NEEDSCRIPT', true); ?>");
+        } else {
+            submitform(task);
         }
-        </script>
-        <form action="index.php" method="post" name="adminForm" id="adminForm">
+    }
+</script>
+<form action="index.php" method="post" name="adminForm" id="adminForm">
 
-        <fieldset class="adminform">
-            <legend><?php echo JText::_('COM_JUMI_DETAILS'); ?></legend>
+    <fieldset class="adminform">
+        <legend><?php echo Text::_('COM_JUMI_DETAILS'); ?></legend>
 
-            <table class="admintable">
+        <table class="admintable">
             <tr>
                 <td width="200" class="key">
                     <label for="title">
-                        <?php echo JText::_('COM_JUMI_TITLE'); ?>:
+                        <?php echo Text::_('COM_JUMI_TITLE'); ?>:
                     </label>
                 </td>
                 <td>
@@ -56,7 +56,7 @@ JHtml::_('bootstrap.tooltip');
             <tr>
                 <td width="200" class="key">
                     <label for="alias">
-                        <?php echo JText::_('Alias'); ?>:
+                        <?php echo Text::_('Alias'); ?>:
                     </label>
                 </td>
                 <td>
@@ -66,7 +66,7 @@ JHtml::_('bootstrap.tooltip');
             <tr>
                 <td class="key">
                     <label for="custom_script">
-                        <?php echo JHTML::_('tooltip', JTEXT::_('COM_JUMI_CUSTOMSCRIPT')); ?> <?php echo JText::_('COM_JUMI_CUSTOM_SCRIPT'); ?>:
+                        <?php echo HTMLHelper::_('tooltip', Text::_('COM_JUMI_CUSTOMSCRIPT')); ?> <?php echo Text::_('COM_JUMI_CUSTOM_SCRIPT'); ?>:
                     </label>
                 </td>
                 <td>
@@ -77,22 +77,22 @@ JHtml::_('bootstrap.tooltip');
                 <td class="key">
 
                     <label for="path">
-                        <?php echo JHTML::_('tooltip', JTEXT::_('COM_JUMI_INCLFILE')); ?> <?php echo JText::_('COM_JUMI_PATHNAME'); ?>:
+                        <?php echo HTMLHelper::_('tooltip', Text::_('COM_JUMI_INCLFILE')); ?> <?php echo Text::_('COM_JUMI_PATHNAME'); ?>:
                     </label>
                 </td>
                 <td>
                     <input class="inputbox" type="text" name="path" id="path" size="60" value="<?php echo @$row->path; ?>" />
                 </td>
             </tr>
-            </table>
-        </fieldset>
+        </table>
+    </fieldset>
 
-        <div class="clr"></div>
+    <div class="clr"></div>
 
-        <input type="hidden" name="task" value="save" />
-        <input type="hidden" name="option" value="com_jumi" />
-        <input type="hidden" name="controller" value="application" />
-        <input type="hidden" name="id" value="<?php echo $row->id; ?>" />
-        <input type="hidden" name="cid[]" value="<?php echo $row->id; ?>" />
-        <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
-        </form>
+    <input type="hidden" name="task" value="save" />
+    <input type="hidden" name="option" value="com_jumi" />
+    <input type="hidden" name="controller" value="application" />
+    <input type="hidden" name="id" value="<?php echo $row->id; ?>" />
+    <input type="hidden" name="cid[]" value="<?php echo $row->id; ?>" />
+    <input type="hidden" name="textfieldcheck" value="<?php echo @$n; ?>" />
+</form>

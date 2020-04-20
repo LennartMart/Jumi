@@ -12,15 +12,16 @@
  * Jumi
  *
  */
+// Import Joomla! libraries
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\Filter\OutputFilter;
+use Joomla\Utilities\ArrayHelper;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-// Import Joomla! libraries
-jimport('joomla.application.component.model');
-jimport('joomla.utilities.date');
-
-class JumiModeleditApplication extends JModelLegacy
+class JumiModeleditApplication extends BaseDatabaseModel
 {
 
     /**
@@ -33,7 +34,7 @@ class JumiModeleditApplication extends JModelLegacy
     {
         parent::__construct();
 
-        $jinput = JFactory::getApplication()->input;
+        $jinput = Factory::getApplication()->input;
         $id = $jinput->getInt('cid', 0);
         $this->setId($id);
     }
@@ -50,7 +51,6 @@ class JumiModeleditApplication extends JModelLegacy
         // Set id and wipe data
         $this->_id = $id;
         $this->_data = null;
-
     }
 
     /**
@@ -70,7 +70,7 @@ class JumiModeleditApplication extends JModelLegacy
             $this->_data->id = 0;
             $this->_data->name = null;
         }
-        JFilterOutput::objectHTMLSafe($this->_data, ENT_QUOTES);
+        OutputFilter::objectHTMLSafe($this->_data, ENT_QUOTES);
         return $this->_data;
     }
 
@@ -83,7 +83,7 @@ class JumiModeleditApplication extends JModelLegacy
      */
     function store()
     {
-        $jinput = JFactory::getApplication()->input;
+        $jinput = Factory::getApplication()->input;
 
         $applid = $jinput->getInt('cid', 0);
 
@@ -96,8 +96,7 @@ class JumiModeleditApplication extends JModelLegacy
             $this->_db->setQuery($query);
             if (!$this->_db->query())
                 return false;
-        }
-        else {
+        } else {
             $query = "update #__jumi set title = $title, alias = $alias, custom_script = $custom_script, path = $path where id = $applid";
             $this->_db->setQuery($query);
             if (!$this->_db->query())
@@ -115,11 +114,11 @@ class JumiModeleditApplication extends JModelLegacy
      */
     function delete()
     {
-        $jinput = JFactory::getApplication()->input;
+        $jinput = Factory::getApplication()->input;
         $cids = $jinput->post->get('cid', array(), 'ARRAY');
 
         if (count($cids)) {
-            foreach ($cids AS $id) {
+            foreach ($cids as $id) {
                 $query = "delete from #__jumi where id = " . $this->_db->quote($id);
                 $this->_db->setQuery($query);
                 $this->_db->query();
@@ -139,13 +138,13 @@ class JumiModeleditApplication extends JModelLegacy
      */
     function publish($publish)
     {
-        $jinput = JFactory::getApplication()->input;
+        $jinput = Factory::getApplication()->input;
         $cids = $jinput->post->get('cid', array(), 'ARRAY');
-        JArrayHelper::toInteger($cids);
+        ArrayHelper::toInteger($cids);
         $cids_sql = implode(',', $cids);
 
         if (count($cids)) {
-            $query = "UPDATE #__jumi SET published = " . (int)$publish . " WHERE id in ($cids_sql)";
+            $query = "UPDATE #__jumi SET published = " . (int) $publish . " WHERE id in ($cids_sql)";
             $this->_db->setQuery($query);
             if (!$this->_db->query())
                 return false;
