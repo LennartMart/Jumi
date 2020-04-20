@@ -1,70 +1,95 @@
 <?php
-
 /**
- * Joomla! 3.x component Jumi
+ * Joomla! 1.5 component sexy_polling
  *
  * @version $Id: view.html.php 2012-04-05 14:30:25 svn $
  * @author Edvard Ananyan
  * @package Joomla
- * @subpackage jumi
+ * @subpackage sexypolling
  * @license GNU/GPL
  *
  *
  */
-use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\HtmlView;
-use Joomla\CMS\HTML\HTMLHelper;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+// Import Joomla! libraries
+jimport( 'joomla.application.component.view');
 
-class JumiViewshowApplications extends HtmlView
-{
-    function display($tpl = null)
-    {
+if(JV == 'j2') {
+    //j2 stuff here///////////////////////////////////////////////////////////////////////////////////////////////////////
+    class JumiViewshowApplications extends JView {
+        function display($tpl = null) {
 
-        //toolbar
-        ToolbarHelper::publishList();
-        ToolbarHelper::unpublishList();
-        ToolbarHelper::addNew();
-        ToolbarHelper::editList();
-        ToolbarHelper::deleteList();
-        ToolbarHelper::help('screen.applications');
+            //toolbar
+            JToolBarHelper::publishList();
+            JToolBarHelper::unpublishList();
+            JToolBarHelper::addNew();
+            JToolBarHelper::editList();
+            JToolBarHelper::deleteList();
+            JToolBarHelper::help( 'screen.applications' );
 
-        // Get data from the model
-        $items = $this->get('Data');
-        $filter = $this->get('Filter');
-        $pagination = $this->get('Pagination');
+            // Get data from the model
+            $items = $this->get( 'Data');
+            $filter = $this->get('Filter');
+            $pagination = $this->get('Pagination');
 
-        $this->items = $items;
-        $this->filter = $filter;
-        $this->pagination = $pagination;
+            $this->assignRef( 'items', $items );
+            $this->assignRef('filter', $filter);
+            $this->assignRef('pagination', $pagination);
 
-        JHtmlSidebar::addFilter(
-            Text::_('JOPTION_SELECT_PUBLISHED'),
-            'filter_published',
-            @HTMLHelper::_('select.options', HTMLHelper::_('jgrid.publishedOptions'), 'value', 'text', $this->filter->published, true)
-        );
-
-        parent::display($tpl);
-    }
-
-    /**
-     * Returns an array of fields the table can be sorted by
-     *
-     * @return  array  Array containing the field name to sort by as the key and display text as value
-     *
-     * @since   3.0
-     */
-    protected function getSortFields()
-    {
-        return array(
-            'm.published' => Text::_('JSTATUS'),
-            'm.title' => Text::_('JGLOBAL_TITLE'),
-            'm.path' => Text::_('Path'),
-            'm.id' => Text::_('Id'),
-        );
+            parent::display($tpl);
+        }
     }
 }
+else {
+    //j3 stuff here///////////////////////////////////////////////////////////////////////////////////////////////////////
+    class JumiViewshowApplications extends JViewLegacy {
+        function display($tpl = null) {
+
+            //toolbar
+            JToolBarHelper::publishList();
+            JToolBarHelper::unpublishList();
+            JToolBarHelper::addNew();
+            JToolBarHelper::editList();
+            JToolBarHelper::deleteList();
+            JToolBarHelper::help( 'screen.applications' );
+
+            // Get data from the model
+            $items = $this->get( 'Data');
+            $filter = $this->get('Filter');
+            $pagination = $this->get('Pagination');
+
+            $this->assignRef( 'items', $items );
+            $this->assignRef('filter', $filter);
+            $this->assignRef('pagination', $pagination);
+
+            JHtmlSidebar::addFilter(
+                    JText::_('JOPTION_SELECT_PUBLISHED'),
+                    'filter_published',
+                    @JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->filter->published, true)
+            );
+
+            parent::display($tpl);
+        }
+
+        /**
+         * Returns an array of fields the table can be sorted by
+         *
+         * @return  array  Array containing the field name to sort by as the key and display text as value
+         *
+         * @since   3.0
+         */
+        protected function getSortFields()
+        {
+            return array(
+                    'm.published' => JText::_('JSTATUS'),
+                    'm.title' => JText::_('JGLOBAL_TITLE'),
+                    'm.path' => JText::_('Path'),
+                    'm.id' => JText::_('Id'),
+            );
+        }
+    }
+}
+?>

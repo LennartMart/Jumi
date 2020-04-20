@@ -1,47 +1,74 @@
 <?php
-
 /**
- * Joomla! 3.x component Jumi
+ * Joomla! 1.5 component sexy_polling
  *
  * @version $Id: view.html.php 2012-04-05 14:30:25 svn $
  * @author Edvard Ananyan
  * @package Joomla
- * @subpackage Jumi
+ * @subpackage sexypolling
  * @license GNU/GPL
  *
  *
  */
-use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\HtmlView;
+
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+// Import Joomla! libraries
+jimport( 'joomla.application.component.view');
 
-class JumiVieweditApplication extends HtmlView
-{
-    function display($tpl = null)
-    {
-        //get the data
-        $application = $this->get('Data');
+if(JV == 'j2') {
+    //j2 stuff here///////////////////////////////////////////////////////////////////////////////////////////////////////
+    class JumiVieweditApplication extends JView {
+        function display($tpl = null) {
+            //get the data
+            $application        = $this->get('Data');
 
-        $isNew = ($application->id < 1);
+            $isNew      = ($application->id < 1);
 
-        $text = $isNew ? Text::_('New') : Text::_('Edit');
-        ToolbarHelper::title(Text::_('Jumi Application') . ': <small><small>[ ' . $text . ' ]</small></small>', 'manage.png');
-        ToolbarHelper::save();
-        if ($isNew) {
-            ToolbarHelper::cancel();
+            $text = $isNew ? JText::_( 'New' ) : JText::_( 'Edit' );
+            JToolBarHelper::title(   JText::_( 'Jumi Application' ).': <small><small>[ ' . $text.' ]</small></small>','manage.png' );
+            JToolBarHelper::save();
+            if ($isNew)  {
+                JToolBarHelper::cancel();
+            } else {
+                JToolBarHelper::apply();
+                // for existing items the button is renamed `close`
+                JToolBarHelper::cancel( 'cancel', 'Close' );
+            }
+            JToolBarHelper::help('screen.applications.edit');
+
+            $this->assignRef('row',     $application);
+
+            parent::display($tpl);
         }
-        else {
-            ToolbarHelper::apply();
-            // for existing items the button is renamed `close`
-            ToolbarHelper::cancel('cancel', 'Close');
-        }
-        ToolbarHelper::help('screen.applications.edit');
-
-        $this->row = $application;
-
-        parent::display($tpl);
     }
 }
+else {
+    //j3 stuff here///////////////////////////////////////////////////////////////////////////////////////////////////////
+    class JumiVieweditApplication extends JViewLegacy {
+        function display($tpl = null) {
+            //get the data
+            $application        = $this->get('Data');
+
+            $isNew      = ($application->id < 1);
+
+            $text = $isNew ? JText::_( 'New' ) : JText::_( 'Edit' );
+            JToolBarHelper::title(   JText::_( 'Jumi Application' ).': <small><small>[ ' . $text.' ]</small></small>','manage.png' );
+            JToolBarHelper::save();
+            if ($isNew)  {
+                JToolBarHelper::cancel();
+            } else {
+                JToolBarHelper::apply();
+                // for existing items the button is renamed `close`
+                JToolBarHelper::cancel( 'cancel', 'Close' );
+            }
+            JToolBarHelper::help('screen.applications.edit');
+
+            $this->assignRef('row',     $application);
+
+            parent::display($tpl);
+        }
+    }
+}
+?>

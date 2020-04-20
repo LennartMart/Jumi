@@ -1,27 +1,24 @@
 <?php
-
 /**
- * @version   $Id$
- * @package   Jumi
- * @copyright (C) 2008 - 2015 Edvard Ananyan
- * @license   GNU/GPL v3 http://www.gnu.org/licenses/gpl.html
- */
+* @version   $Id$
+* @package   Jumi
+* @copyright (C) 2008 - 2015 Edvard Ananyan
+* @license   GNU/GPL v3 http://www.gnu.org/licenses/gpl.html
+*/
 
 defined('_JEXEC') or die('Restricted access');
 
-jimport('joomla.plugin.plugin');
+jimport( 'joomla.plugin.plugin' );
 
 /**
  * JumiRouter plugin
  *
  */
-class plgSystemJumiRouter extends JPlugin
-{
-    function __construct(&$subject, $config)
-    {
+class  plgSystemJumiRouter extends JPlugin {
+    function __construct(& $subject, $config) {
         // check to see if we are on frontend to execute plugin
         $mainframe = JFactory::getApplication();
-        if ($mainframe->isAdmin())
+        if($mainframe->isAdmin())
             return;
 
         parent::__construct($subject, $config);
@@ -32,11 +29,10 @@ class plgSystemJumiRouter extends JPlugin
      *
      * @access public
      */
-    function onAfterInitialise()
-    {
+    function onAfterInitialise() {
         $mainframe = JFactory::getApplication();
 
-        $uri = JURI::getInstance();
+        $uri    = JURI::getInstance();
         $router = $mainframe->getRouter();
 
         $router->attachParseRule('parseJumiRouter');
@@ -52,28 +48,27 @@ class plgSystemJumiRouter extends JPlugin
  * @param $router object of JRouter class
  * @param $uri object of JURI class
  */
-function parseJumiRouter(&$router, &$uri)
-{
-    if ($router->getMode() == JROUTER_MODE_RAW)
+function parseJumiRouter(& $router, & $uri) {
+    if($router->getMode() == JROUTER_MODE_RAW)
         return array();
 
     $db = JFactory::getDBO();
     $db->setQuery('select id, title, alias from #__jumi where published = 1');
     $apps = $db->loadRowList();
     $alias = array();
-    foreach ($apps as $i => $app) {
-        if (empty($app[2]))
+    foreach($apps as $i=>$app) {
+        if(empty($app[2]))
             $apps[$i][2] = JFilterOutput::stringURLSafe($app[1]);
         $alias[$i] = $apps[$i][2];
     }
 
     $segments = explode('/', $uri->getPath());
-    foreach ($segments as $i => $segment)
-        if ( ($j = array_search($segment, $alias)) !== false) {
-        unset($segments[$i]);
-        $uri->setVar('option', 'com_jumi');
-        $uri->setVar('fileid', $apps[$j][0]);
-    }
+    foreach($segments as $i => $segment)
+        if(($j = array_search($segment, $alias)) !== false) {
+            unset($segments[$i]);
+            $uri->setVar('option', 'com_jumi');
+            $uri->setVar('fileid', $apps[$j][0]);
+        }
 
     $uri->setPath(implode('/', $segments));
 

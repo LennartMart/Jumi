@@ -1,24 +1,21 @@
 <?php
-
 /**
- * Joomla! 3.x component Jumi
+ * Joomla! 1.5 component sexy_polling
  *
  * @version $Id: controller.php 2012-04-05 14:30:25 svn $
  * @author Edvard Ananyan
  * @package Joomla
- * @subpackage Jumi
+ * @subpackage sexypolling
  * @license GNU/GPL
  *
- * Jumi
+ * Sexy Polling
  *
  */
-
-use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\CMS\Factory;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+jimport( 'joomla.application.component.controller' );
 
 /**
  * jumi Controller
@@ -27,22 +24,40 @@ defined('_JEXEC') or die('Restricted access');
  * @subpackage com_jumi
  */
 
-class JumiController extends BaseController
-{
-    function display($cachable = false, $urlparams = array())
-    {
+if(JV == 'j2') {
+    //j2 stuff here///////////////////////////////////////////////////////////////////////////////////////////////////////
+    class JumiController extends JController {
+        function display($cachable = false, $urlparams = array())
+        {
 
-        addSub('Application Manager', 'showapplications');
+            addSub( 'Application Manager', 'showapplications');
 
-        //Set the default view, just in case
-        $jinput = Factory::getApplication()->input;
-        $view = $jinput->getCmd('view');
-        if (empty($view)) {
-            $jinput->set('view', 'showApplications');
-        };
+            //Set the default view, just in case
+            $view = JRequest::getCmd('view');
+            if(empty($view)) {
+                JRequest::setVar('view', 'showApplications');
+            };
 
-        parent::display();
-    } // function
+            parent::display();
+        }// function
+    };
+}
+else {
+    //j3 stuff here///////////////////////////////////////////////////////////////////////////////////////////////////////
+    class JumiController extends JControllerLegacy{
+        function display($cachable = false, $urlparams = array())
+        {
 
+            addSub( 'Application Manager', 'showapplications');
 
-};
+            //Set the default view, just in case
+            $view = JRequest::getCmd('view');
+            if(empty($view)) {
+                JRequest::setVar('view', 'showApplications');
+            };
+
+            parent::display();
+        }// function
+    };
+}
+?>

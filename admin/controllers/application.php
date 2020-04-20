@@ -1,32 +1,29 @@
 <?php
-
 /**
- * Jumi! 3.0 component
+ * Joomla! 1.5 component sexy_polling
  *
  * @version $Id: answers.php 2012-04-05 14:30:25 svn $
  * @author Edvard Ananyan
- * @package Jumi
- * @subpackage Jumi
+ * @package Joomla
+ * @subpackage sexy_polling
  * @license GNU/GPL
  *
+ * Sexy Polling
  *
  */
-
-use Joomla\CMS\Factory;
-use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\CMS\Language\Text;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+jimport( 'joomla.application.component.controller' );
+
 /**
- * 
+ * sexy_polling Controller
  *
  * @package Joomla
- * @subpackage Jumi
+ * @subpackage sexy_polling
  */
-class JumiControllerapplication extends JumiController
-{
+class JumiControllerapplication extends JumiController {
 
     /**
      * constructor (registers additional tasks to methods)
@@ -37,8 +34,8 @@ class JumiControllerapplication extends JumiController
         parent::__construct();
 
         // Register Extra tasks
-        $this->registerTask('add', 'edit');
-        $this->registerTask('unpublish', 'publish');
+        $this->registerTask( 'add'  ,   'edit' );
+        $this->registerTask( 'unpublish',   'publish');
     }
 
     /**
@@ -47,9 +44,8 @@ class JumiControllerapplication extends JumiController
      */
     function edit()
     {
-        $jinput = Factory::getApplication()->input;
-        $jinput->set('view', 'editapplication');
-        $jinput->set('hidemainmenu', 1);
+        JRequest::setVar( 'view', 'editapplication' );
+        JRequest::setVar('hidemainmenu', 1);
 
         parent::display();
     }
@@ -63,9 +59,9 @@ class JumiControllerapplication extends JumiController
         $model = $this->getModel('editapplication');
 
         if ($model->store()) {
-            $msg = Text::_('Application Saved');
+            $msg = JText::_( 'Application Saved' );
         } else {
-            $msg = Text::_('Error Saving Application');
+            $msg = JText::_( 'Error Saving Application' );
         }
 
         // Check the table in so it can be edited.... we are done with it anyway
@@ -82,14 +78,14 @@ class JumiControllerapplication extends JumiController
         $model = $this->getModel('editapplication');
 
         if ($model->store()) {
-            $msg = Text::_('Changes to Application saved');
+            $msg = JText::_( 'Changes to Application saved' );
         } else {
-            $msg = Text::_('Error Saving Application');
+            $msg = JText::_( 'Error Saving Application' );
         }
-        $jinput = Factory::getApplication()->input;
-        $cids = $jinput->post->get('cid', array(), 'ARRAY');
-        $id = count($cids) > 0 ? (int) $cids[0] : 0;
-        $this->setRedirect('index.php?option=com_jumi&controller=application&task=edit&cid[]=' . $id, $msg);
+        $array = JRequest::getVar('cid',  0, '', 'array');
+        $id = (int)$array[0];
+        $this->setRedirect( 'index.php?option=com_jumi&controller=application&task=edit&cid[]=' . $id, $msg );
+
     }
 
     /**
@@ -98,15 +94,15 @@ class JumiControllerapplication extends JumiController
      */
     function publish()
     {
-        $publish = ($this->getTask() == 'publish' ? 1 : 0);
+        $publish = ( $this->getTask() == 'publish' ? 1 : 0 );
         $model = $this->getModel('editapplication');
-        if (!$model->publish($publish)) {
-            $msg = Text::_('Error: One or More Applications Could not be Published/Unpublished');
+        if(!$model->publish($publish)) {
+            $msg = JText::_( 'Error: One or More Applications Could not be Published/Unbublished' );
         } else {
             $msg = '';
         }
 
-        $this->setRedirect('index.php?option=com_jumi', $msg);
+        $this->setRedirect( 'index.php?option=com_jumi', $msg );
     }
 
     /**
@@ -116,13 +112,13 @@ class JumiControllerapplication extends JumiController
     function remove()
     {
         $model = $this->getModel('editapplication');
-        if (!$model->delete()) {
-            $msg = Text::_('Error: One or More Applications Could not be Deleted');
+        if(!$model->delete()) {
+            $msg = JText::_( 'Error: One or More Applications Could not be Deleted' );
         } else {
-            $msg = Text::_('Application(s) Deleted');
+            $msg = JText::_( 'Application(s) Deleted' );
         }
 
-        $this->setRedirect('index.php?option=com_jumi', $msg);
+        $this->setRedirect( 'index.php?option=com_jumi', $msg );
     }
 
     /**
@@ -131,7 +127,9 @@ class JumiControllerapplication extends JumiController
      */
     function cancel()
     {
-        $msg = Text::_('Operation Cancelled');
-        $this->setRedirect('index.php?option=com_jumi', $msg);
+        $msg = JText::_( 'Operation Cancelled' );
+        $this->setRedirect( 'index.php?option=com_jumi', $msg );
     }
+
 }
+?>
