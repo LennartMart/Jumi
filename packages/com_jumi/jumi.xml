@@ -41,7 +41,7 @@
     </languages>
 
     <administration>
-        <menu img="class:jumi">COM_JUMI_MENU</menu>
+        <menu img="class:code" link="option=com_jumi">COM_JUMI_MENU</menu>
         <files folder="admin">
             <filename>access.xml</filename>
             <filename>config.xml</filename>

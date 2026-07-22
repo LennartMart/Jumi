@@ -10,7 +10,6 @@
 
 namespace Jumi\Component\Jumi\Administrator\Model;
 
-use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Database\DatabaseQuery;
 use Joomla\Database\ParameterType;

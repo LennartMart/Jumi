@@ -73,6 +73,8 @@ class ApplicationModel extends AdminModel
             $data = $this->getItem();
         }
 
+        $this->preprocessData('com_jumi.application', $data);
+
         return $data;
     }
 }

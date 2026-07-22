@@ -76,12 +76,15 @@ class ApplicationModel extends ItemModel
         }
 
         if (!isset($this->_item[$pk])) {
-            $db    = $this->getDatabase();
+            $db     = $this->getDatabase();
+            $levels = Factory::getApplication()->getIdentity()->getAuthorisedViewLevels();
+
             $query = $db->getQuery(true)
                 ->select($db->quoteName(['id', 'title', 'alias', 'path', 'custom_script', 'access', 'published']))
                 ->from($db->quoteName('#__jumi'))
                 ->where($db->quoteName('id') . ' = :id')
                 ->where($db->quoteName('published') . ' = 1')
+                ->whereIn($db->quoteName('access'), $levels)
                 ->bind(':id', $pk, ParameterType::INTEGER);
 
             $db->setQuery($query);
