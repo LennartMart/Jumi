@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" client="site" method="upgrade">
+    <name>mod_jumi</name>
+    <author>Edvard Ananyan</author>
+    <creationDate>2026</creationDate>
+    <copyright>Copyright (C) 2026 LennartMart. All rights reserved.</copyright>
+    <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+    <authorEmail>info@2glux.com</authorEmail>
+    <authorUrl>http://2glux.com</authorUrl>
+    <version>4.0.0</version>
+    <description>MOD_JUMI_XML_DESCRIPTION</description>
+
+    <namespace path="src">Jumi\Module\Jumi</namespace>
+
+    <files>
+        <folder module="mod_jumi">services</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+    </files>
+
+    <languages>
+        <language tag="en-GB">language/en-GB/mod_jumi.ini</language>
+        <language tag="en-GB">language/en-GB/mod_jumi.sys.ini</language>
+    </languages>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="notepad"
+                    type="textarea"
+                    label="MOD_JUMI_FIELD_NOTEPAD_LABEL"
+                    description="MOD_JUMI_FIELD_NOTEPAD_DESC"
+                    cols="60"
+                    rows="3"
+                />
+                <field
+                    name="code_written"
+                    type="textarea"
+                    label="MOD_JUMI_FIELD_CODE_WRITTEN_LABEL"
+                    description="MOD_JUMI_FIELD_CODE_WRITTEN_DESC"
+                    filter="raw"
+                    cols="60"
+                    rows="15"
+                />
+                <field
+                    name="source_code_storage"
+                    type="text"
+                    label="MOD_JUMI_FIELD_SOURCE_LABEL"
+                    description="MOD_JUMI_FIELD_SOURCE_DESC"
+                    filter="raw"
+                    size="97"
+                />
+            </fieldset>
+
+            <fieldset name="advanced">
+                <field
+                    name="default_absolute_path"
+                    type="text"
+                    label="MOD_JUMI_FIELD_ABSPATH_LABEL"
+                    description="MOD_JUMI_FIELD_ABSPATH_DESC"
+                    filter="raw"
+                    size="90"
+                />
+                <field
+                    name="layout"
+                    type="modulelayout"
+                    label="JFIELD_ALT_LAYOUT_LABEL"
+                    class="form-select"
+                    validate="moduleLayout"
+                />
+                <field
+                    name="moduleclass_sfx"
+                    type="textarea"
+                    label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                    rows="3"
+                    validate="CssIdentifier"
+                />
+                <field
+                    name="cache"
+                    type="list"
+                    label="COM_MODULES_FIELD_CACHING_LABEL"
+                    default="0"
+                    filter="integer"
+                    validate="options"
+                >
+                    <option value="1">JGLOBAL_USE_GLOBAL</option>
+                    <option value="0">COM_MODULES_FIELD_VALUE_NOCACHING</option>
+                </field>
+                <field
+                    name="cache_time"
+                    type="number"
+                    label="COM_MODULES_FIELD_CACHE_TIME_LABEL"
+                    default="900"
+                    filter="integer"
+                />
+            </fieldset>
+        </fields>
+    </config>
+</extension>

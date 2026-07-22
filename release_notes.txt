@@ -1,27 +1,37 @@
-Jumi package for Joomla 1.5
-Developer's web pages: http://edo.webmaster.am
-Downloads and guides: http://jumi.vedeme.cz
-Tips and tricks: http://edo.webmaster.am/jumi
+Jumi package for Joomla! 6
+Copyright (C) 2026 LennartMart. All rights reserved.
 ================================
-Version 2.0.6
-Release date: 2009/10/17
+Version 4.0.0
 ================================
 This package contains the following extensions:
-    - Jumi component
-    - Jumi content plugin
-    - Jumi system router plugin
-    - Jumi module
+    - Jumi component (com_jumi)
+    - Jumi system plugin (plg_system_jumi)
+    - Jumi module (mod_jumi)
 
-Installation/uninstallation instructions:
-Install Jumi package as a standard Joomla! extension. All extensions contained in the package are installed automatically.
-Uninstallation of Jumi component also uninstalls all other Jumi extensions (Jumi module and both Jumi plugins).
+Major changes in 4.0.0 (Joomla! 6 migration):
+    - Rewritten for the Joomla 4/5/6 extension architecture:
+        * Namespaced PSR-4 MVC (base namespace Jumi\...).
+        * Dependency-injection service providers (services/provider.php) for the
+          component, module and plugin.
+        * The module now uses a namespaced Dispatcher + Helper.
+        * The system plugin now implements SubscriberInterface and receives its
+          dependencies (application, database) via the DI container.
+    - Removed all deprecated Joomla APIs (JFactory, JControllerLegacy,
+      JModelLegacy, JViewLegacy, jimport, JRequest, JResponse, JObject,
+      JArrayHelper, JString, JToolBarHelper, ...).
+    - Replaced the legacy root router.php and the separate "Jumi Router" system
+      plugin with a component SEF router (com_jumi Site\Service\Router).
+    - Distribution is now a Joomla package (pkg_jumi) instead of a component
+      that self-installs sub-extensions via a JInstaller script.
+    - Database queries use prepared statements / parameter binding throughout.
+    - The #__jumi table now uses InnoDB / utf8mb4 and adds checked_out_time for
+      proper record check-in/out support.
 
-Changes:
-    - Fixed: links
-================================
-Demo
-There are several demos there. All of them are installed automatically. Any one is accessible by any Jumi extension.
-Component demo: there are two component demos in Jumi table of your Joomla! database. The first one, Hello Jumi!, is automatically assign the main menu item. The second one, Blogspot, can be accessed through the previous demo or you can assign to it a menu item manually - by a standard Joomla! manner.
-Module demo file: modules/mod_jumi/jumi_demo.php
-Plugin demo file: plugins/system/jumi/jumi_demo.php
+Installation:
+    Install the pkg_jumi package as a standard Joomla! extension. All bundled
+    extensions are installed automatically and the system plugin is enabled.
+
+Uninstallation:
+    Uninstalling the package removes the component, module and plugin. The
+    component uninstall drops the #__jumi table.
 ================================
