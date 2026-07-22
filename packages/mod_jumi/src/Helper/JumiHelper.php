@@ -63,11 +63,11 @@ class JumiHelper implements DatabaseAwareInterface
                     echo '<div class="alert alert-warning">'
                         . Text::sprintf('MOD_JUMI_ERROR_RECORD', $storageSource) . '</div>';
                 }
-            } elseif (is_readable($storageSource)) {
-                include $storageSource;
+            } elseif (($safePath = $this->resolveIncludePath((string) $storageSource, $params)) !== null) {
+                include $safePath;
             } else {
                 echo '<div class="alert alert-warning">'
-                    . Text::sprintf('MOD_JUMI_ERROR_FILE', htmlspecialchars($storageSource, ENT_QUOTES, 'UTF-8'))
+                    . Text::sprintf('MOD_JUMI_ERROR_FILE', htmlspecialchars((string) $storageSource, ENT_QUOTES, 'UTF-8'))
                     . '</div>';
             }
         }
@@ -101,13 +101,53 @@ class JumiHelper implements DatabaseAwareInterface
             return (int) $id;
         }
 
-        $abspath = trim((string) $params->get('default_absolute_path', ''));
+        return $storage;
+    }
 
-        if ($abspath === '') {
-            $abspath = JPATH_ROOT;
+    /**
+     * Safely resolve a file reference to an absolute path constrained to a trusted base directory.
+     *
+     * Prevents arbitrary local file inclusion / directory traversal: the resolved file must exist and
+     * live inside the configured base directory (or the Joomla root when none is configured).
+     *
+     * @param   string    $source  The raw file reference from the module parameters.
+     * @param   Registry  $params  The module parameters.
+     *
+     * @return  string|null  The safe absolute path, or null when the reference is not allowed.
+     *
+     * @since   4.0.0
+     */
+    private function resolveIncludePath(string $source, Registry $params): ?string
+    {
+        if (strpos($source, "\0") !== false) {
+            return null;
         }
 
-        return $abspath . '/' . $storage;
+        $base = trim((string) $params->get('default_absolute_path', ''));
+
+        if ($base === '') {
+            $base = JPATH_ROOT;
+        }
+
+        $realBase = realpath($base);
+
+        if ($realBase === false) {
+            return null;
+        }
+
+        // Ignore any leading slash so an absolute reference cannot escape the base directory.
+        $candidate = $realBase . \DIRECTORY_SEPARATOR . ltrim($source, '/\\');
+        $real      = realpath($candidate);
+
+        if ($real === false || !is_file($real) || !is_readable($real)) {
+            return null;
+        }
+
+        if ($real !== $realBase && strpos($real, $realBase . \DIRECTORY_SEPARATOR) !== 0) {
+            return null;
+        }
+
+        return $real;
     }
 
     /**

@@ -128,8 +128,8 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
                                 $output = '<div class="alert alert-warning">'
                                     . Text::sprintf('PLG_SYSTEM_JUMI_ERROR_RECORD', $storageSource) . '</div>';
                             }
-                        } elseif (is_readable($storageSource)) {
-                            include $storageSource;
+                        } elseif (($safePath = $this->resolveIncludePath($storageSource, $absPath)) !== null) {
+                            include $safePath;
                         } else {
                             $output = '<div class="alert alert-warning">'
                                 . Text::sprintf('PLG_SYSTEM_JUMI_ERROR_FILE', htmlspecialchars($storageSource, ENT_QUOTES, 'UTF-8'))
@@ -183,11 +183,53 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
             return (int) $id;
         }
 
-        if ($absPath === '') {
-            return $storage;
+        return $storage;
+    }
+
+    /**
+     * Safely resolve a file reference to an absolute path constrained to a trusted base directory.
+     *
+     * The {jumi ...} tags are matched against the whole rendered page body, so a reference could
+     * originate from reflected user input. To avoid arbitrary local file inclusion / traversal, the
+     * resolved file must exist and live inside the configured base directory (or the Joomla root when
+     * no base is configured).
+     *
+     * @param   string  $source   The raw file reference taken from the tag.
+     * @param   string  $absPath  The configured default absolute path (may be empty).
+     *
+     * @return  string|null  The safe absolute path, or null when the reference is not allowed.
+     *
+     * @since   4.0.0
+     */
+    private function resolveIncludePath(string $source, string $absPath): ?string
+    {
+        // Reject null bytes outright.
+        if (strpos($source, "\0") !== false) {
+            return null;
         }
 
-        return $absPath . '/' . $storage;
+        $base     = $absPath !== '' ? $absPath : JPATH_ROOT;
+        $realBase = realpath($base);
+
+        if ($realBase === false) {
+            return null;
+        }
+
+        // Always resolve the reference relative to the trusted base; ignore any leading slash so an
+        // absolute path cannot escape the base directory.
+        $candidate = $realBase . \DIRECTORY_SEPARATOR . ltrim($source, '/\\');
+        $real      = realpath($candidate);
+
+        if ($real === false || !is_file($real) || !is_readable($real)) {
+            return null;
+        }
+
+        // The canonicalised path must remain inside the base directory (defeats ../ traversal).
+        if ($real !== $realBase && strpos($real, $realBase . \DIRECTORY_SEPARATOR) !== 0) {
+            return null;
+        }
+
+        return $real;
     }
 
     /**

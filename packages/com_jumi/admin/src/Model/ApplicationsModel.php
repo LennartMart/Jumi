@@ -143,11 +143,17 @@ class ApplicationsModel extends ListModel
             }
         }
 
-        // Add the list ordering clause.
-        $orderCol  = $this->state->get('list.ordering', 'a.id');
-        $orderDirn = $this->state->get('list.direction', 'asc');
+        // Add the list ordering clause, validating against the allowed fields to prevent SQL injection
+        // through the ORDER BY column (escape() alone does not restrict the column name).
+        $orderCol = $this->state->get('list.ordering', 'a.id');
 
-        $query->order($db->escape($orderCol) . ' ' . $db->escape($orderDirn));
+        if (!\in_array($orderCol, $this->filter_fields, true)) {
+            $orderCol = 'a.id';
+        }
+
+        $orderDirn = strtoupper((string) $this->state->get('list.direction', 'asc')) === 'DESC' ? 'DESC' : 'ASC';
+
+        $query->order($db->escape($orderCol) . ' ' . $orderDirn);
 
         return $query;
     }

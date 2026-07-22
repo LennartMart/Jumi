@@ -91,10 +91,14 @@ class JumiDemoBlog
                 $prev_date = date('l, F j, Y', strtotime($entry->published));
             }
 
+            // Escape remote feed values before output to avoid stored/reflected XSS from the feed source.
+            $href  = htmlspecialchars((string) ($entry->link[0]['href'] ?? ''), ENT_QUOTES, 'UTF-8');
+            $title = htmlspecialchars((string) $entry->title, ENT_QUOTES, 'UTF-8');
+
             echo '<div class="post">';
-            echo '<h3 class="post-title"><a href="' . $entry->link[0]['href'] . '">' . $entry->title . '</a></h3>';
+            echo '<h3 class="post-title"><a href="' . $href . '">' . $title . '</a></h3>';
             echo '<div class="post-header-line-1"></div>';
-            echo '<div class="post-body">' . $entry->content . '</div>';
+            echo '<div class="post-body">' . strip_tags((string) $entry->content, '<p><br><a><b><i><strong><em><ul><ol><li><blockquote><img><h1><h2><h3><h4>') . '</div>';
             echo '</div>';
         }
 
