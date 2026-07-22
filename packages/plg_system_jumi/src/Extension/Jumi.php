@@ -25,8 +25,15 @@ use Joomla\Event\SubscriberInterface;
 /**
  * Jumi system plugin.
  *
- * Replaces the {jumi [source] [arg1] ... [argN]} syntax in the rendered page
- * with the output of the referenced Jumi application (stored record or file).
+ * Replaces the {jumi [source] [arg1] ... [argN]} syntax inside prepared content
+ * items (e.g. article text) with the output of the referenced Jumi application
+ * (stored record or file).
+ *
+ * The plugin deliberately hooks onContentPrepare rather than onAfterRender: the
+ * latter scans the entire rendered page body, so any reflected user input that
+ * happened to contain a {jumi ...} tag (search terms, error messages, 404 URLs,
+ * ...) would be interpreted and executed. Processing only prepared content items
+ * keeps the trust boundary at "who may author this content".
  *
  * @since  4.0.0
  */
@@ -52,12 +59,12 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
     public static function getSubscribedEvents(): array
     {
         return [
-            'onAfterRender' => 'onAfterRender',
+            'onContentPrepare' => 'onContentPrepare',
         ];
     }
 
     /**
-     * Search the rendered output for {jumi ...} tags and replace them.
+     * Search a prepared content item for {jumi ...} tags and replace them.
      *
      * @param   Event  $event  The event instance.
      *
@@ -65,34 +72,50 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
      *
      * @since   4.0.0
      */
-    public function onAfterRender(Event $event): void
+    public function onContentPrepare(Event $event): void
     {
         $app = $this->getApplication();
 
         // Only run on the front-end.
-        if ($app->isClient('administrator')) {
+        if ($app && $app->isClient('administrator')) {
             return;
         }
 
-        $content = $app->getBody();
+        // Resolve the content item across the typed content event and the generic argument styles.
+        if (method_exists($event, 'getItem')) {
+            $item = $event->getItem();
+        } else {
+            $item = $event->getArgument('subject') ?? $event->getArgument('object');
+        }
 
-        if ($content === null || $content === '') {
+        if (!\is_object($item) || empty($item->text) || strpos((string) $item->text, '{jumi') === false) {
             return;
         }
 
+        $item->text = $this->replaceTags((string) $item->text);
+    }
+
+    /**
+     * Replace every {jumi ...} tag inside the given text with the referenced output.
+     *
+     * @param   string  $content  The content to process.
+     *
+     * @return  string  The processed content.
+     *
+     * @since   4.0.0
+     */
+    private function replaceTags(string $content): string
+    {
         // Expression to search for.
         $regex   = '/{(jumi)\s*(.*?)}/i';
         $absPath = trim((string) $this->params->get('default_absolute_path', ''));
 
         // If hide_code then simply strip the Jumi tags.
         if ((int) $this->params->get('hide_code', 0) === 1) {
-            $content = preg_replace($regex, '', $content);
-            $app->setBody($content);
-
-            return;
+            return (string) preg_replace($regex, '', $content);
         }
 
-        $nestedReplace    = (int) $this->params->get('nested_replace', 0) === 1;
+        $nestedReplace     = (int) $this->params->get('nested_replace', 0) === 1;
         $continueSearching = true;
 
         while ($continueSearching) {
@@ -157,7 +180,7 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
             }
         }
 
-        $app->setBody($content);
+        return $content;
     }
 
     /**
@@ -189,10 +212,8 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
     /**
      * Safely resolve a file reference to an absolute path constrained to a trusted base directory.
      *
-     * The {jumi ...} tags are matched against the whole rendered page body, so a reference could
-     * originate from reflected user input. To avoid arbitrary local file inclusion / traversal, the
-     * resolved file must exist and live inside the configured base directory (or the Joomla root when
-     * no base is configured).
+     * To avoid arbitrary local file inclusion / directory traversal, the resolved file must exist and
+     * live inside the configured base directory (or the Joomla root when no base is configured).
      *
      * @param   string  $source   The raw file reference taken from the tag.
      * @param   string  $absPath  The configured default absolute path (may be empty).
