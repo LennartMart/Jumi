@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+    <name>com_jumi</name>
+    <author>Edvard Ananyan</author>
+    <creationDate>2026</creationDate>
+    <copyright>Copyright (C) 2026 LennartMart. All rights reserved.</copyright>
+    <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+    <authorEmail>info@2glux.com</authorEmail>
+    <authorUrl>http://2glux.com/</authorUrl>
+    <version>4.0.0</version>
+    <description>COM_JUMI_XML_DESCRIPTION</description>
+
+    <namespace path="src">Jumi\Component\Jumi</namespace>
+
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
+
+    <!-- Site files -->
+    <files folder="site">
+        <folder>src</folder>
+        <folder>tmpl</folder>
+        <folder>files</folder>
+        <filename>metadata.xml</filename>
+    </files>
+
+    <languages folder="site/language">
+        <language tag="en-GB">en-GB/com_jumi.ini</language>
+    </languages>
+
+    <administration>
+        <menu img="class:code" link="option=com_jumi">COM_JUMI_MENU</menu>
+        <files folder="admin">
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+            <folder>services</folder>
+            <folder>src</folder>
+            <folder>forms</folder>
+            <folder>tmpl</folder>
+            <folder>sql</folder>
+        </files>
+        <languages folder="admin/language">
+            <language tag="en-GB">en-GB/com_jumi.ini</language>
+            <language tag="en-GB">en-GB/com_jumi.sys.ini</language>
+        </languages>
+    </administration>
+</extension>

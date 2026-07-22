@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="package" method="upgrade">
+    <name>Jumi</name>
+    <packagename>jumi</packagename>
+    <author>Edvard Ananyan</author>
+    <creationDate>2026</creationDate>
+    <copyright>Copyright (C) 2026 LennartMart. All rights reserved.</copyright>
+    <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+    <authorEmail>info@2glux.com</authorEmail>
+    <authorUrl>http://2glux.com</authorUrl>
+    <version>4.0.0</version>
+    <packager>LennartMart</packager>
+    <packagerurl>https://github.com/lennartmart/jumi</packagerurl>
+    <description><![CDATA[Jumi package for Joomla! 6 — includes custom code (HTML, PHP, JS, CSS, ...) into Joomla! pages. This package installs the Jumi component, the Jumi module and the Jumi system plugin.]]></description>
+
+    <scriptfile>script.php</scriptfile>
+
+    <files folder="packages">
+        <file type="component" id="com_jumi">com_jumi</file>
+        <file type="module" client="site" id="mod_jumi">mod_jumi</file>
+        <file type="plugin" group="system" id="jumi">plg_system_jumi</file>
+    </files>
+</extension>
