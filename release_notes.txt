@@ -26,6 +26,18 @@ Major changes in 4.0.0 (Joomla! 6 migration):
     - Database queries use prepared statements / parameter binding throughout.
     - The #__jumi table now uses InnoDB / utf8mb4 and adds checked_out_time for
       proper record check-in/out support.
+    - Security hardening:
+        * File includes are canonicalised and constrained to the configured base
+          directory (or the Joomla root), defeating directory traversal.
+        * {jumi} tags are only processed in prepared content items, not in the
+          rendered page body, so reflected user input is never executed.
+        * The nested tag replacement is bounded to prevent runaway loops, and
+          output buffers are always cleaned up when embedded code throws.
+        * The Smart Search (com_finder) indexer never executes Jumi applications.
+        * The bundled Blogspot demo sanitises remote feed HTML with an
+          attribute-aware allow-list filter, validates the blog id, fetches the
+          feed with a bounded timeout, parses it with network access disabled
+          (LIBXML_NONET) and caches it in the Joomla cache directory.
 
 Installation:
     Install the pkg_jumi package as a standard Joomla! extension. All bundled

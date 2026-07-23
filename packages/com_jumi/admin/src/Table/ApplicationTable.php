@@ -70,7 +70,7 @@ class ApplicationTable extends Table
         }
 
         // A title is mandatory.
-        if (trim($this->title) === '') {
+        if (trim((string) $this->title) === '') {
             $this->setError(Text::_('COM_JUMI_ERROR_NEEDTITLE'));
 
             return false;
@@ -84,7 +84,7 @@ class ApplicationTable extends Table
         }
 
         // Generate a valid alias, falling back to the title, then to a timestamp.
-        if (trim($this->alias) === '') {
+        if (trim((string) $this->alias) === '') {
             $this->alias = $this->title;
         }
 

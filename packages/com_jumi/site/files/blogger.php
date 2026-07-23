@@ -10,12 +10,15 @@
  * Demonstration Jumi application: renders a Blogger feed.
  */
 
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\CMS\Http\HttpFactory;
+
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-$blogId    = isset($blogId) ? $blogId : '1748567850225926498';
-$login     = isset($login) ? $login : 'joomla-jumi';
+$blogId    = isset($blogId) ? (string) $blogId : '1748567850225926498';
+$login     = isset($login) ? (string) $login : 'joomla-jumi';
 $cacheTime = isset($cacheTime) ? (int) $cacheTime : 86400;
 
 $myBlog = new JumiDemoBlog($blogId, $login, $cacheTime);
@@ -46,26 +49,76 @@ class JumiDemoBlog
 
     public function __construct($id, $login, $cacheTime)
     {
-        $this->id        = $id;
-        $this->login     = $login;
-        $this->cacheTime = $cacheTime;
-        $postsURL        = 'https://www.blogger.com/feeds/' . $id . '/posts/default';
-        $fileName        = 'cache/' . md5($postsURL);
+        $this->id        = (string) $id;
+        $this->login     = (string) $login;
+        $this->cacheTime = (int) $cacheTime;
+        $this->posts     = false;
 
-        if (file_exists($fileName) && time() - filemtime($fileName) < $this->cacheTime) {
-            $this->posts = simplexml_load_string(file_get_contents($fileName));
-        } else {
-            $feed = @file_get_contents($postsURL);
-
-            if ($feed !== false && strlen($feed) > 1000) {
-                @file_put_contents($fileName, $feed);
-                $this->posts = simplexml_load_string($feed);
-            } elseif (file_exists($fileName)) {
-                $this->posts = simplexml_load_string(file_get_contents($fileName));
-            } else {
-                $this->posts = false;
-            }
+        // A Blogger blog id is numeric; refuse anything else so the id cannot
+        // alter the request URL (query strings, path traversal, other hosts).
+        if (!preg_match('/^\d+$/', $this->id)) {
+            return;
         }
+
+        $postsURL = 'https://www.blogger.com/feeds/' . $this->id . '/posts/default';
+        $fileName = JPATH_CACHE . '/jumi_blogger_' . md5($postsURL) . '.xml';
+
+        if (is_file($fileName) && time() - filemtime($fileName) < $this->cacheTime) {
+            $this->posts = $this->parseFeed((string) file_get_contents($fileName));
+
+            return;
+        }
+
+        $feed = $this->fetchFeed($postsURL);
+
+        if ($feed !== null && \strlen($feed) > 1000) {
+            if (is_dir(JPATH_CACHE) && is_writable(JPATH_CACHE)) {
+                file_put_contents($fileName, $feed);
+            }
+
+            $this->posts = $this->parseFeed($feed);
+        } elseif (is_file($fileName)) {
+            // Fall back to a stale cache copy when the remote fetch fails.
+            $this->posts = $this->parseFeed((string) file_get_contents($fileName));
+        }
+    }
+
+    /**
+     * Fetch the remote feed with a bounded timeout.
+     *
+     * @param   string  $url  The feed URL.
+     *
+     * @return  string|null  The feed body or null on failure.
+     */
+    private function fetchFeed(string $url): ?string
+    {
+        try {
+            $response = HttpFactory::getHttp()->get($url, [], 10);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        if ($response->getStatusCode() !== 200) {
+            return null;
+        }
+
+        return (string) $response->getBody();
+    }
+
+    /**
+     * Parse the feed XML without allowing any network access from the parser.
+     *
+     * @param   string  $xml  The raw feed XML.
+     *
+     * @return  \SimpleXMLElement|false
+     */
+    private function parseFeed(string $xml)
+    {
+        if ($xml === '') {
+            return false;
+        }
+
+        return simplexml_load_string($xml, \SimpleXMLElement::class, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING);
     }
 
     public function printAllPosts()
@@ -75,6 +128,14 @@ class JumiDemoBlog
 
             return;
         }
+
+        // Allow-list based filter: strips disallowed tags, event-handler
+        // attributes (onclick, onerror, ...) and javascript: URLs, which
+        // strip_tags() alone would let through.
+        $bodyFilter = new InputFilter(
+            ['p', 'br', 'a', 'b', 'i', 'strong', 'em', 'ul', 'ol', 'li', 'blockquote', 'img', 'h1', 'h2', 'h3', 'h4'],
+            ['href', 'src', 'alt', 'title']
+        );
 
         echo '<div class="blog-posts">';
         $prev_date = '';
@@ -86,19 +147,28 @@ class JumiDemoBlog
                 }
             }
 
-            if ($prev_date != date('l, F j, Y', strtotime($entry->published))) {
-                echo '<h2 class="date-header">' . date('l, F j, Y', strtotime($entry->published)) . '</h2>';
-                $prev_date = date('l, F j, Y', strtotime($entry->published));
+            $published = strtotime((string) $entry->published) ?: 0;
+            $dayHeader = date('l, F j, Y', $published);
+
+            if ($prev_date !== $dayHeader) {
+                echo '<h2 class="date-header">' . $dayHeader . '</h2>';
+                $prev_date = $dayHeader;
             }
 
             // Escape remote feed values before output to avoid stored/reflected XSS from the feed source.
-            $href  = htmlspecialchars((string) ($entry->link[0]['href'] ?? ''), ENT_QUOTES, 'UTF-8');
+            $href = (string) ($entry->link[0]['href'] ?? '');
+
+            if (!preg_match('#^https?://#i', $href)) {
+                $href = '';
+            }
+
+            $href  = htmlspecialchars($href, ENT_QUOTES, 'UTF-8');
             $title = htmlspecialchars((string) $entry->title, ENT_QUOTES, 'UTF-8');
 
             echo '<div class="post">';
             echo '<h3 class="post-title"><a href="' . $href . '">' . $title . '</a></h3>';
             echo '<div class="post-header-line-1"></div>';
-            echo '<div class="post-body">' . strip_tags((string) $entry->content, '<p><br><a><b><i><strong><em><ul><ol><li><blockquote><img><h1><h2><h3><h4>') . '</div>';
+            echo '<div class="post-body">' . $bodyFilter->clean((string) $entry->content, 'html') . '</div>';
             echo '</div>';
         }
 

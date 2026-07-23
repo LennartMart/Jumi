@@ -28,15 +28,16 @@ if (!empty($item->path)) {
     // Constrain the include to the Joomla root to prevent directory traversal / arbitrary file inclusion.
     $safePath = null;
 
-    if (strpos((string) $item->path, "\0") === false) {
-        $realBase  = realpath(JPATH_ROOT);
-        $candidate = $realBase . '/' . ltrim((string) $item->path, '/\\');
+    $realBase = realpath(JPATH_ROOT);
+
+    if ($realBase !== false && strpos((string) $item->path, "\0") === false) {
+        $candidate = $realBase . \DIRECTORY_SEPARATOR . ltrim((string) $item->path, '/\\');
         $real      = realpath($candidate);
 
         if (
-            $realBase !== false
-            && $real !== false
+            $real !== false
             && is_file($real)
+            && is_readable($real)
             && ($real === $realBase || strpos($real, $realBase . \DIRECTORY_SEPARATOR) === 0)
         ) {
             $safePath = $real;

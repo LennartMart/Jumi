@@ -81,6 +81,20 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
             return;
         }
 
+        // Resolve the context across the typed content event and the generic argument styles.
+        if (method_exists($event, 'getContext')) {
+            $context = (string) $event->getContext();
+        } else {
+            $context = (string) ($event->getArgument('context') ?? '');
+        }
+
+        // Never execute Jumi applications while Smart Search indexes content in the
+        // background: the code would run without a real visitor and its output would
+        // be stored in the search index.
+        if ($context === 'com_finder.indexer') {
+            return;
+        }
+
         // Resolve the content item across the typed content event and the generic argument styles.
         if (method_exists($event, 'getItem')) {
             $item = $event->getItem();
@@ -118,7 +132,11 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
         $nestedReplace     = (int) $this->params->get('nested_replace', 0) === 1;
         $continueSearching = true;
 
-        while ($continueSearching) {
+        // Bound the nested replacement so output that keeps emitting new {jumi ...}
+        // tags cannot spin this loop forever (resource exhaustion).
+        $remainingPasses = 10;
+
+        while ($continueSearching && $remainingPasses-- > 0) {
             $matches = [];
 
             if (preg_match_all($regex, $content, $matches, PREG_SET_ORDER)) {
@@ -133,7 +151,7 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
                     }
 
                     // The remaining $jumi entries are available to the included code as $jumi[].
-                    $storageSource = $this->getStorageSource(trim((string) array_shift($jumi)), $absPath);
+                    $storageSource = $this->getStorageSource(trim((string) array_shift($jumi)));
                     $output        = '';
 
                     if ($storageSource === '') {
@@ -141,29 +159,33 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
                     } else {
                         ob_start();
 
-                        if (\is_int($storageSource)) {
-                            $codeStored = $this->getCodeStored($storageSource);
+                        try {
+                            if (\is_int($storageSource)) {
+                                $codeStored = $this->getCodeStored($storageSource);
 
-                            if ($codeStored !== null) {
-                                // phpcs:ignore Squiz.PHP.Eval.Discouraged
-                                eval('?>' . $codeStored);
+                                if ($codeStored !== null) {
+                                    // phpcs:ignore Squiz.PHP.Eval.Discouraged
+                                    eval('?>' . $codeStored);
+                                } else {
+                                    $output = '<div class="alert alert-warning">'
+                                        . Text::sprintf('PLG_SYSTEM_JUMI_ERROR_RECORD', $storageSource) . '</div>';
+                                }
+                            } elseif (($safePath = $this->resolveIncludePath($storageSource, $absPath)) !== null) {
+                                include $safePath;
                             } else {
                                 $output = '<div class="alert alert-warning">'
-                                    . Text::sprintf('PLG_SYSTEM_JUMI_ERROR_RECORD', $storageSource) . '</div>';
+                                    . Text::sprintf('PLG_SYSTEM_JUMI_ERROR_FILE', htmlspecialchars($storageSource, ENT_QUOTES, 'UTF-8'))
+                                    . '</div>';
                             }
-                        } elseif (($safePath = $this->resolveIncludePath($storageSource, $absPath)) !== null) {
-                            include $safePath;
-                        } else {
-                            $output = '<div class="alert alert-warning">'
-                                . Text::sprintf('PLG_SYSTEM_JUMI_ERROR_FILE', htmlspecialchars($storageSource, ENT_QUOTES, 'UTF-8'))
-                                . '</div>';
-                        }
 
-                        if ($output === '') {
-                            $output = (string) ob_get_contents();
+                            if ($output === '') {
+                                $output = (string) ob_get_contents();
+                            }
+                        } finally {
+                            // Always discard the buffer, even when the included code throws,
+                            // so an exception cannot leak half-rendered output into the page.
+                            ob_end_clean();
                         }
-
-                        ob_end_clean();
                     }
 
                     // Replace only the first occurrence so identical tags regenerate independently.
@@ -186,14 +208,13 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
     /**
      * Resolve the storage source: a record id (int), a file path (string), or ''.
      *
-     * @param   string  $source   The first Jumi argument.
-     * @param   string  $absPath  The configured default absolute path.
+     * @param   string  $source  The first Jumi argument.
      *
      * @return  int|string  Record id, file path, or empty string.
      *
      * @since   4.0.0
      */
-    private function getStorageSource(string $source, string $absPath)
+    private function getStorageSource(string $source): int|string
     {
         $storage = trim($source);
 
@@ -202,8 +223,8 @@ final class Jumi extends CMSPlugin implements SubscriberInterface, DatabaseAware
         }
 
         // "*id" syntax references a Jumi component record.
-        if ($id = substr(strchr($storage, '*'), 1)) {
-            return (int) $id;
+        if (($pos = strpos($storage, '*')) !== false) {
+            return (int) substr($storage, $pos + 1);
         }
 
         return $storage;

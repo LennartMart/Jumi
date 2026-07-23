@@ -47,36 +47,43 @@ class JumiHelper implements DatabaseAwareInterface
 
         ob_start();
 
-        if ($codeWritten !== '') {
-            // phpcs:ignore Squiz.PHP.Eval.Discouraged
-            eval('?>' . $codeWritten);
-        }
+        try {
+            // $app is intentionally in scope here so the evaluated/included code can use it.
+            if ($codeWritten !== '') {
+                // phpcs:ignore Squiz.PHP.Eval.Discouraged
+                eval('?>' . $codeWritten);
+            }
 
-        if ($storageSource !== '') {
-            if (\is_int($storageSource)) {
-                $codeStored = $this->getCodeStored($storageSource);
+            if ($storageSource !== '') {
+                if (\is_int($storageSource)) {
+                    $codeStored = $this->getCodeStored($storageSource);
 
-                if ($codeStored !== null) {
-                    // phpcs:ignore Squiz.PHP.Eval.Discouraged
-                    eval('?>' . $codeStored);
+                    if ($codeStored !== null) {
+                        // phpcs:ignore Squiz.PHP.Eval.Discouraged
+                        eval('?>' . $codeStored);
+                    } else {
+                        echo '<div class="alert alert-warning">'
+                            . Text::sprintf('MOD_JUMI_ERROR_RECORD', $storageSource) . '</div>';
+                    }
+                } elseif (($safePath = $this->resolveIncludePath((string) $storageSource, $params)) !== null) {
+                    include $safePath;
                 } else {
                     echo '<div class="alert alert-warning">'
-                        . Text::sprintf('MOD_JUMI_ERROR_RECORD', $storageSource) . '</div>';
+                        . Text::sprintf('MOD_JUMI_ERROR_FILE', htmlspecialchars((string) $storageSource, ENT_QUOTES, 'UTF-8'))
+                        . '</div>';
                 }
-            } elseif (($safePath = $this->resolveIncludePath((string) $storageSource, $params)) !== null) {
-                include $safePath;
-            } else {
-                echo '<div class="alert alert-warning">'
-                    . Text::sprintf('MOD_JUMI_ERROR_FILE', htmlspecialchars((string) $storageSource, ENT_QUOTES, 'UTF-8'))
-                    . '</div>';
             }
+
+            if ($codeWritten === '' && $storageSource === '') {
+                echo '<div class="alert alert-warning">' . Text::_('MOD_JUMI_ERROR_CONTENT') . '</div>';
+            }
+        } finally {
+            // Always close the buffer, even when the evaluated code throws, so an
+            // exception cannot leak half-rendered output into the page.
+            $output = (string) ob_get_clean();
         }
 
-        if ($codeWritten === '' && $storageSource === '') {
-            echo '<div class="alert alert-warning">' . Text::_('MOD_JUMI_ERROR_CONTENT') . '</div>';
-        }
-
-        return (string) ob_get_clean();
+        return $output;
     }
 
     /**
@@ -88,7 +95,7 @@ class JumiHelper implements DatabaseAwareInterface
      *
      * @since   4.0.0
      */
-    private function getStorageSource(Registry $params)
+    private function getStorageSource(Registry $params): int|string
     {
         $storage = trim((string) $params->get('source_code_storage', ''));
 
@@ -97,8 +104,8 @@ class JumiHelper implements DatabaseAwareInterface
         }
 
         // "*id" syntax references a Jumi component record.
-        if ($id = substr(strchr($storage, '*'), 1)) {
-            return (int) $id;
+        if (($pos = strpos($storage, '*')) !== false) {
+            return (int) substr($storage, $pos + 1);
         }
 
         return $storage;
